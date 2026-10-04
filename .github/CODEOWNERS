@@ -1,0 +1,14 @@
+# Everything an update-channel compromise would have to go through.
+#
+# Spacewalk is unsandboxed by necessity (a CGEvent tap, ScreenCaptureKit and
+# private SkyLight calls), so Sparkle is the one remote-influenced path into a
+# fully privileged process. These paths decide which signing key is trusted,
+# what the feed says, and what the release script does with both. A change to
+# any of them should be looked at by a human who is not the one proposing it.
+
+/version.env              @tornikegomareli
+/appcast.xml              @tornikegomareli
+/Scripts/                 @tornikegomareli
+/Casks/                   @tornikegomareli
+/install.sh               @tornikegomareli
+/.github/                 @tornikegomareli
