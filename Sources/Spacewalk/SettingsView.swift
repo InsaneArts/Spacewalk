@@ -200,8 +200,14 @@ struct TransitionTab: View {
                     .frame(height: 210)
                     .opacity(model.settings.effect == .instant ? 0.3 : 1)
                     .overlay(alignment: .bottomTrailing) {
+                        // A fixed dark chip: the mock desk behind it can be light or dark.
                         Button("Preview on Screen") { model.preview() }
-                            .controlSize(.small)
+                            .buttonStyle(.plain)
+                            .font(.callout.weight(.medium))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(Color.black.opacity(0.55), in: Capsule())
                             .padding(10)
                     }
                 EffectGallery(selection: $model.settings.effect)
