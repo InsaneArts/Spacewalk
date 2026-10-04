@@ -153,7 +153,7 @@ public final class Switcher {
         lastPictureRefresh = now
         let snapshot = engine.snapshot()
         for display in displays.values {
-            guard display.capture.isRunning, let uuid = SpaceEngine.nameKey(for: display.screen.displayID),
+            guard display.capture.isRunning, let uuid = SpaceEngine.uuid(for: display.screen.displayID),
                   let spaces = snapshot.display(uuid: uuid) else { continue }
             for space in spaces.spaces where space.id != spaces.currentID && !space.isFullscreen
                 && display.capture.lastSeen(for: space.id) == nil && !composing.contains(space.id) {
@@ -386,7 +386,7 @@ public final class Switcher {
     public func refreshWallpapers(forcing: UInt64? = nil, maxAge: Double = 120) async {
         let snapshot = engine.snapshot()
         for display in displays.values {
-            guard let uuid = SpaceEngine.nameKey(for: display.screen.displayID), let spaces = snapshot.display(uuid: uuid) else { continue }
+            guard let uuid = SpaceEngine.uuid(for: display.screen.displayID), let spaces = snapshot.display(uuid: uuid) else { continue }
             if let forcing, spaces.spaces.contains(where: { $0.id == forcing }) {
                 await display.capture.refreshWallpapers(spaces: [forcing], currentSpace: spaces.currentID, maxAge: 0)
             }
@@ -513,7 +513,7 @@ public final class Switcher {
         barTimer = nil
         let snapshot = engine.snapshot()
         for display in displays.values {
-            guard settings.spacesBar, let uuid = SpaceEngine.nameKey(for: display.screen.displayID), let spaces = snapshot.display(uuid: uuid) else {
+            guard settings.spacesBar, let uuid = SpaceEngine.uuid(for: display.screen.displayID), let spaces = snapshot.display(uuid: uuid) else {
                 display.bar.hide()
                 continue
             }
