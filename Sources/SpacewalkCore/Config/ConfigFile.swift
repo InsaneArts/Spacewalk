@@ -196,7 +196,7 @@ public enum ConfigFile {
         bar-position = \(q(s.spacesBarAtTop ? "top" : "bottom"))
         switch-all-displays = \(s.switchAllDisplays)
 
-        [spaces.names]                   # Space uuid = name
+        [spaces.names]                   # Space id = name
 
         """
         for (uuid, name) in s.spaceNames.sorted(by: { $0.key < $1.key }) { out += "\(q(uuid)) = \(q(name))\n" }

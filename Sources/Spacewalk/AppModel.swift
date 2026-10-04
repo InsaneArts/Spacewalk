@@ -216,7 +216,6 @@ final class AppModel {
     }
 
     func setName(_ name: String, forSpace uuid: String) {
-        guard !uuid.isEmpty else { return }
         let trimmed = name.trimmingCharacters(in: .whitespaces)
         if trimmed.isEmpty { settings.spaceNames[uuid] = nil } else { settings.spaceNames[uuid] = trimmed }
     }
@@ -420,7 +419,7 @@ final class AppModel {
                             guard pair.count == 2, let number = Int(pair[0]),
                                   let display = self.spaces.first(where: { $0.displayUUID == SpaceEngine.cursorDisplayUUID() }) ?? self.spaces.first,
                                   display.spaces.indices.contains(number - 1) else { return }
-                            self.setName(pair[1], forSpace: display.spaces[number - 1].uuid)
+                            self.setName(pair[1], forSpace: display.spaces[number - 1].nameKey)
                         case "columns": if let n = Int(parts[1]) { self.settings.overviewColumns = max(0, min(8, n)) }
                         case "export":
                             do { try SettingsStore.export(self.settings, to: URL(fileURLWithPath: parts[1])) } catch {}

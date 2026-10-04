@@ -105,15 +105,15 @@ struct GeneralTab: View {
                     }
                 }
                 ForEach(model.spaces, id: \.displayUUID) { display in
-                    ForEach(Array(display.spaces.enumerated()), id: \.element.uuid) { index, space in
+                    ForEach(Array(display.spaces.enumerated()), id: \.element.nameKey) { index, space in
                         HStack {
                             Text("\(index + 1)")
                                 .monospacedDigit()
                                 .frame(width: 22, alignment: .trailing)
                                 .foregroundStyle(index == display.currentIndex ? Color.accentColor : .secondary)
                             TextField(space.isFullscreen ? "Full Screen \(index + 1)" : "Desktop \(index + 1)",
-                                      text: Binding(get: { model.settings.spaceNames[space.uuid] ?? "" },
-                                                    set: { model.setName($0, forSpace: space.uuid) }))
+                                      text: Binding(get: { model.settings.spaceNames[space.nameKey] ?? "" },
+                                                    set: { model.setName($0, forSpace: space.nameKey) }))
                                 .textFieldStyle(.roundedBorder)
                         }
                     }

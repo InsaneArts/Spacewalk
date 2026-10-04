@@ -6,6 +6,9 @@ public struct Space: Equatable, Sendable {
     public let type: Int
     public let uuid: String
     public var isFullscreen: Bool { type == 4 }
+    /// Key for a user-given name. The first Space of a display can report an empty uuid, so the
+    /// managed id fills in there; config files keep the uuid where there is one.
+    public var nameKey: String { uuid.isEmpty ? "id:\(id)" : uuid }
 }
 
 /// The ordered spaces of one display, as Mission Control shows them.
@@ -21,7 +24,7 @@ public struct DisplaySpaces: Equatable, Sendable {
     public func label(at index: Int, names: [String: String] = [:]) -> String {
         guard spaces.indices.contains(index) else { return "Space \(index + 1)" }
         let space = spaces[index]
-        if let name = names[space.uuid]?.trimmingCharacters(in: .whitespaces), !name.isEmpty { return name }
+        if let name = names[space.nameKey]?.trimmingCharacters(in: .whitespaces), !name.isEmpty { return name }
         if space.isFullscreen { return "Full screen \(index + 1)" }
         let desktopNumber = spaces.prefix(index + 1).filter { !$0.isFullscreen }.count
         return "Desktop \(desktopNumber)"
