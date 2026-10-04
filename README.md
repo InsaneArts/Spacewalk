@@ -40,6 +40,19 @@ or travel with them. Every Space keeps its own wallpaper through the transition.
   <img src="docs/assets/settings-shortcuts.png" width="46%" alt="Settings, Shortcuts tab: key fields for each Space, app shortcuts, trackpad and mouse" />
 </p>
 
+## Or no animation at all
+
+<p align="center">
+  <img src="docs/assets/instant.gif" width="90%" alt="Side by side at one fifth speed: macOS slides for half a second while Spacewalk in Instant mode shows the new Space after 64 ms, and after 16 ms when it has seen that Space before" />
+</p>
+
+Pick **Instant** and there is no transition: the Dock switches with nothing left to animate, and
+the new Space is simply there. On a Space you have not visited through Spacewalk yet, its picture
+is on screen 60 to 110 ms after the key; once Spacewalk has seen a Space, it keeps the last picture
+and shows it in 12 to 13 ms, then fades the live frame in. macOS's own slide takes about half a
+second and cannot be shortened. The counters above run at one fifth of real time; the numbers are
+the ones measured in [`docs/AUDIT.md`](docs/AUDIT.md).
+
 ## Follow your fingers
 
 Turn on the trackpad in Settings > Shortcuts and a three-finger swipe plays your transition
