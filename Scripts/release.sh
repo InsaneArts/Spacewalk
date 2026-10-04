@@ -317,7 +317,7 @@ PREV_TAG="$(git describe --tags --abbrev=0 "$TAG^" 2>/dev/null || true)"
   echo "## Install"
   echo
   echo '```sh'
-  echo "brew install --cask $REPO/spacewalk"
+  echo "brew install --cask tornikegomareli/tap/spacewalk"
   echo '```'
   echo
   echo "or"

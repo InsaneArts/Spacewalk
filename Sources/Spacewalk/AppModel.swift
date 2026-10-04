@@ -216,6 +216,7 @@ final class AppModel {
     }
 
     func setName(_ name: String, forSpace uuid: String) {
+        guard !uuid.isEmpty else { return }
         let trimmed = name.trimmingCharacters(in: .whitespaces)
         if trimmed.isEmpty { settings.spaceNames[uuid] = nil } else { settings.spaceNames[uuid] = trimmed }
     }

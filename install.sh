@@ -40,7 +40,9 @@ fail() { printf '\033[1;31merror:\033[0m %s\n' "$1" >&2; exit 1; }
 
 # /Applications when this user may write there, which an administrator can; ~/Applications
 # otherwise. Either way no sudo.
-if [[ -w /Applications ]]; then APP_DIR=/Applications; else APP_DIR="$HOME/Applications"; fi
+if [[ -n "${SPACEWALK_APP_DIR:-}" ]]; then APP_DIR="$SPACEWALK_APP_DIR"   # for testing the installer
+elif [[ -w /Applications ]]; then APP_DIR=/Applications
+else APP_DIR="$HOME/Applications"; fi
 DEST="$APP_DIR/$APP_NAME.app"
 
 if $UNINSTALL; then
@@ -93,7 +95,7 @@ mkdir -p "$MOUNT"
 hdiutil attach "$TMP/$APP_NAME.dmg" -nobrowse -readonly -quiet -mountpoint "$MOUNT" || fail "could not mount the disk image"
 [[ -d "$MOUNT/$APP_NAME.app" ]] || fail "the disk image holds no $APP_NAME.app"
 
-if pgrep -x "$APP_NAME" >/dev/null 2>&1; then
+if [[ -z "${SPACEWALK_APP_DIR:-}" ]] && pgrep -x "$APP_NAME" >/dev/null 2>&1; then
   osascript -e "tell application id \"dev.tgomareli.spacewalk\" to quit" >/dev/null 2>&1 || pkill -x "$APP_NAME" || true
   sleep 0.5
 fi
