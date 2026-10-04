@@ -28,7 +28,7 @@ usage: spacewalk switch <n>       go to the n-th space of the display under the 
        spacewalk snapshot <path>  save a PNG of the main display, overlay included
        spacewalk snapshot <path>|settings  save a PNG of the settings window alone
        spacewalk render <dir>     render the current effect offscreen, one PNG per sampled frame
-                              (dir|full for screen size, dir|scrub|36 for 36 evenly spaced frames)
+                              (options after |: full, scrub, 36 frames, 1440x900, back)
                               (dir|full for screen size, dir|scrub|36 for 36 evenly spaced frames)
        spacewalk wallpapers <dir> save the wallpaper Spacewalk has captured for every space
 """

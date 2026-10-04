@@ -434,13 +434,17 @@ final class AppModel {
                                 try? result.write(toFile: parts[1] + "/result.txt", atomically: true, encoding: .utf8)
                             }
                         case "render":
-                            // dir, dir|full, dir|scrub, or dir|scrub|<frames> for an evenly sampled run.
+                            // dir, then any of: full, scrub, <frames>, <width>x<height>, back.
                             let fields = parts[1].split(separator: "|").map(String.init)
                             let directory = fields[0]
-                            let full = fields.dropFirst().contains("full")
-                            let scrub = fields.dropFirst().contains("scrub")
-                            let frames = fields.dropFirst().compactMap { Int($0) }.first
-                            let result = FrameRenderer.render(settings: self.settings, to: directory, fullSize: full, scrub: scrub, frameCount: frames)
+                            let options = fields.dropFirst()
+                            let frames = options.compactMap { Int($0) }.first
+                            let size: CGSize? = options.lazy.compactMap { option -> CGSize? in
+                                let dims = option.split(separator: "x").compactMap { Double($0) }
+                                return dims.count == 2 ? CGSize(width: dims[0], height: dims[1]) : nil
+                            }.first
+                            let result = FrameRenderer.render(settings: self.settings, to: directory, fullSize: options.contains("full"), scrub: options.contains("scrub"),
+                                                              frameCount: frames, size: size, backward: options.contains("back"))
                             try? result.write(toFile: directory + "/result.txt", atomically: true, encoding: .utf8)
                         default: break
                         }

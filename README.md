@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/assets/showreel.gif" width="90%" alt="Five Spacewalk transitions between two Spaces: cube, tilt, depth, flip and slide" />
+  <img src="docs/assets/showreel.gif" width="90%" alt="Four Spacewalk transitions between two Spaces: cube, tilt, depth and flip, each with its own wallpaper" />
 </p>
 
 macOS moves between Spaces with one slow slide you cannot change. Spacewalk replaces it with a
