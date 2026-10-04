@@ -30,7 +30,7 @@ while [[ $# -gt 0 ]]; do
     --version=*) VERSION="${1#*=}"; shift ;;
     --no-launch) LAUNCH=false; shift ;;
     --uninstall) UNINSTALL=true; shift ;;
-    -h|--help) sed -n '3,19p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h|--help) awk 'NR >= 3 && /^#/ { sub(/^# ?/, ""); print } NR >= 3 && !/^#/ { exit }' "$0"; exit 0 ;;
     *) echo "unknown option: $1" >&2; exit 1 ;;
   esac
 done
