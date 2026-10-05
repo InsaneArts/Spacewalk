@@ -55,7 +55,7 @@ cat > "$APP/Contents/Info.plist" <<PLIST
     <key>NSHighResolutionCapable</key><true/>
     <key>NSSupportsAutomaticGraphicsSwitching</key><true/>
     <key>CFBundleIconFile</key><string>Spacewalk</string>
-    <key>NSHumanReadableCopyright</key><string>© 2026 Tornike Gomareli. MIT License.</string>
+    <key>NSHumanReadableCopyright</key><string>© 2026 InsaneArts. MIT License.</string>
     <!-- Sparkle: the feed on main and the public half of the EdDSA signing key (version.env). -->
     <key>SUFeedURL</key><string>${SPARKLE_FEED_URL}</string>
     <key>SUPublicEDKey</key><string>${SPARKLE_PUBLIC_KEY}</string>
