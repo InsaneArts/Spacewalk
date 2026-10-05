@@ -9,533 +9,231 @@
 <meta property="og:description" content="Spaces, without the wait. Instant Space switching for macOS, or twelve transitions you choose.">
 <meta property="og:image" content="https://insanearts.github.io/Spacewalk/media/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#1c1c1c">
+<meta name="theme-color" content="#0f0f10">
 <link rel="icon" type="image/png" href="media/favicon.png">
 <link rel="apple-touch-icon" href="media/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #1c1c1c;
-  --gutter: #161616;
-  --panel: #232323;
-  --card: #2a2a2a;
-  --line: rgba(255, 255, 255, 0.08);
-  --line-strong: rgba(255, 255, 255, 0.14);
-  --text: #ecebe6;
-  --muted: #a3a29c;
-  --faint: #6f6e69;
+  --bg: #0f0f10;
+  --box: #18181a;
+  --line: #2a2a2d;
+  --text: #f2f2f3;
+  --muted: #9a9aa1;
+  --faint: #626268;
   --accent: #a592f0;
-  --accent-soft: rgba(165, 146, 240, 0.16);
-  --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
-  --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  --col: 1120px;
+  --sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body {
-  margin: 0;
-  background: var(--gutter);
-  color: var(--text);
-  font: 400 14px/1.7 var(--mono);
-  -webkit-font-smoothing: antialiased;
-}
+body { margin: 0; background: var(--bg); color: var(--text); font: 400 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; }
 a { color: inherit; }
 img, video { display: block; max-width: 100%; }
-code { font-family: var(--mono); }
-
-/* The framed column. Vertical rules run the full page height. */
-.frame {
-  max-width: var(--col);
-  margin: 0 auto;
-  background: var(--bg);
-  border-left: 1px solid var(--line);
-  border-right: 1px solid var(--line);
-}
-section, header.hero, footer { border-bottom: 1px solid var(--line); position: relative; }
-.inner { padding: 104px 72px; }
-.narrow { max-width: 620px; margin: 0 auto; }
-
-/* Grain and scanlines, as in the reference. */
-.grain::before {
-  content: "";
-  position: absolute; inset: 0;
-  pointer-events: none;
-  background:
-    repeating-linear-gradient(0deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 3px),
-    radial-gradient(ellipse 70% 60% at 50% 0%, rgba(165,146,240,0.10), transparent 70%);
-}
-
-h1, h2, h3 { font-family: var(--serif); font-weight: 400; margin: 0; letter-spacing: -0.015em; }
-h1 { font-size: clamp(46px, 7.4vw, 88px); line-height: 1.02; }
-h2 { font-size: clamp(34px, 4.6vw, 52px); line-height: 1.08; }
-h3 { font-size: 24px; line-height: 1.2; }
-h1 em, h2 em { font-style: italic; }
+code, kbd { font-family: var(--mono); font-size: 0.9em; }
 p { margin: 0; color: var(--muted); }
+h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.02em; }
 
-/* Buttons. The cream button is the reference's tactile key. */
-.btn {
-  display: inline-flex; align-items: center; gap: 10px;
-  padding: 12px 22px;
-  border-radius: 8px;
-  font: 500 14px/1 var(--mono);
-  text-decoration: none;
-  white-space: nowrap;
-  cursor: pointer;
-}
-.btn svg { width: 14px; height: 14px; flex: none; }
-.btn.cream {
-  color: #1d1c1a;
-  background: linear-gradient(180deg, #fbf9f3 0%, #e3dfd3 100%);
-  border: 1px solid #fffdf7;
-  box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 -2px 0 rgba(0,0,0,0.12) inset, 0 6px 18px rgba(0,0,0,0.45);
-}
-.btn.cream:hover { background: linear-gradient(180deg, #ffffff 0%, #ebe7dc 100%); }
-.btn.cream:active { transform: translateY(1px); box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 3px 10px rgba(0,0,0,0.45); }
-.btn.dark {
-  color: var(--text);
-  background: linear-gradient(180deg, #333 0%, #262626 100%);
-  border: 1px solid var(--line-strong);
-  box-shadow: 0 1px 0 rgba(255,255,255,0.06) inset, 0 6px 18px rgba(0,0,0,0.35);
-}
-.btn.big { padding: 16px 28px; font-size: 16px; }
+.wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
 
-.badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 5px 12px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid var(--line);
-  font-size: 12px; color: var(--muted);
-}
-.badge img { width: 16px; height: 16px; border-radius: 4px; }
-
-/* Floating nav. */
-.nav-wrap { position: sticky; top: 12px; z-index: 20; padding: 0 16px; }
-nav {
-  max-width: calc(var(--col) - 120px);
-  margin: 12px auto 0;
-  display: flex; align-items: center; gap: 24px;
-  padding: 8px 8px 8px 14px;
-  background: rgba(30, 30, 30, 0.82);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-  border: 1px solid var(--line-strong);
-  border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-}
-.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 400 22px/1 var(--serif); }
-.brand img { width: 30px; height: 30px; border-radius: 7px; }
-nav .links { display: flex; gap: 22px; margin-left: auto; font-size: 13px; }
-nav .links a { text-decoration: none; color: var(--muted); }
+nav { display: flex; align-items: center; gap: 24px; max-width: 880px; margin: 0 auto; padding: 20px 24px; font-size: 14px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 600; text-decoration: none; }
+.brand img { width: 28px; height: 28px; }
+nav .links { display: flex; gap: 22px; margin-left: auto; }
+nav .links a { color: var(--muted); text-decoration: none; }
 nav .links a:hover { color: var(--text); }
-nav .btn { padding: 9px 14px; font-size: 13px; }
 
-/* Hero. */
-.hero .inner { padding-top: 96px; padding-bottom: 0; text-align: center; }
-.hero h1 { margin-top: 24px; }
-.hero .lede { max-width: 560px; margin: 24px auto 0; }
-.hero .cta { margin-top: 36px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
-.hero .fine { margin-top: 18px; font-size: 12px; color: var(--faint); }
-.hero .fine a { color: var(--muted); }
+/* Hero: icon, headline, one line, then the install box. */
+.hero { padding: 72px 0 0; text-align: center; }
+.hero > img { width: 96px; height: 96px; margin: 0 auto 28px; }
+h1 { font-size: clamp(40px, 6.4vw, 64px); line-height: 1.05; }
+.lede { max-width: 520px; margin: 18px auto 0; font-size: 18px; }
 
-/* A film sits inside a bezel, like the reference's device frame. */
-.bezel {
-  position: relative;
-  margin: 64px auto 0;
-  padding: 10px;
-  border-radius: 22px;
-  background: linear-gradient(160deg, #6e5fb8 0%, #3c3470 45%, #2a2547 100%);
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.12) inset, 0 30px 80px rgba(0,0,0,0.55), 0 0 120px rgba(165,146,240,0.12);
-}
-.bezel.plain { background: linear-gradient(160deg, #3a3a3a, #262626); box-shadow: 0 0 0 1px rgba(255,255,255,0.08) inset, 0 24px 60px rgba(0,0,0,0.5); }
-.bezel video { width: 100%; border-radius: 13px; background: #000; aspect-ratio: 16 / 9; }
-.hero .bezel { margin-bottom: -1px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; padding-bottom: 0; }
-.hero .bezel video { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
-.sound {
-  position: absolute; right: 22px; bottom: 22px;
-  padding: 6px 12px;
-  border-radius: 7px;
-  border: 1px solid rgba(255,255,255,0.16);
-  background: rgba(20,20,20,0.7);
-  backdrop-filter: blur(8px);
-  color: var(--text);
-  font: 500 12px/1 var(--mono);
-  cursor: pointer;
-}
-.hero .sound { bottom: 14px; }
+.install { max-width: 620px; margin: 40px auto 0; text-align: left; border: 1px solid var(--line); border-radius: 10px; background: var(--box); overflow: hidden; }
+.tabs { display: flex; border-bottom: 1px solid var(--line); }
+.tabs button { padding: 11px 18px; border: 0; border-right: 1px solid var(--line); background: none; color: var(--faint); font: 500 12px/1 var(--mono); letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; }
+.tabs button[aria-selected="true"] { color: var(--text); box-shadow: inset 0 -2px 0 var(--accent); }
+.panel { display: flex; align-items: center; gap: 12px; padding: 18px 16px 18px 18px; }
+.panel[hidden] { display: none; }
+.panel code { flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; font-size: 14px; scrollbar-width: none; }
+.panel code::-webkit-scrollbar { display: none; }
+.panel code::before { content: "$ "; color: var(--faint); }
+.copy { flex: none; padding: 7px 12px; border: 1px solid var(--line); border-radius: 6px; background: none; color: var(--muted); font: 500 12px/1 var(--mono); cursor: pointer; }
+.copy:hover { color: var(--text); border-color: var(--faint); }
+.alt { margin-top: 18px; font-size: 14px; color: var(--faint); }
+.alt a { color: var(--muted); }
+.alt a:hover { color: var(--text); }
 
-/* Stats row, in the place of the reference's logo strip. */
-.stats { display: grid; grid-template-columns: repeat(3, 1fr); }
-.stat { padding: 40px 32px; text-align: center; border-right: 1px solid var(--line); }
-.stat:last-child { border-right: 0; }
-.stat b { display: block; font: 400 44px/1 var(--serif); letter-spacing: -0.02em; }
-.stat.us b { color: var(--accent); }
-.stat span { display: block; margin-top: 12px; font-size: 12px; color: var(--muted); }
-.source { padding: 14px 32px; border-top: 1px solid var(--line); text-align: center; font-size: 11px; color: var(--faint); }
-.source a { color: var(--muted); }
+.film { position: relative; margin-top: 64px; }
+.film video { width: 100%; aspect-ratio: 16 / 9; border-radius: 12px; border: 1px solid var(--line); background: #000; }
+.sound { position: absolute; right: 14px; bottom: 14px; padding: 6px 11px; border: 1px solid rgba(255,255,255,0.18); border-radius: 6px; background: rgba(0,0,0,0.6); color: var(--text); font: 500 12px/1 var(--sans); cursor: pointer; }
 
-/* Manifesto. */
-.manifesto p { color: var(--text); font-size: 16px; line-height: 1.8; }
-.manifesto p + p { margin-top: 22px; }
-.tok { font-weight: 500; white-space: nowrap; }
-.tok i { display: inline-block; width: 16px; height: 16px; margin-right: 6px; vertical-align: -2px; border-radius: 4px; font-style: normal; font-size: 10px; line-height: 16px; text-align: center; color: #111; }
-.tok.v { color: #c4b6ff; } .tok.v i { background: #a592f0; }
-.tok.g { color: #8fe0b8; } .tok.g i { background: #6fd3a2; }
-.tok.y { color: #f2d27a; } .tok.y i { background: #f0c75e; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 40px; text-align: center; }
+.stats b { display: block; font-size: 30px; font-weight: 600; letter-spacing: -0.02em; }
+.stats .us b { color: var(--accent); }
+.stats span { display: block; margin-top: 4px; font-size: 13px; color: var(--muted); }
+.source { margin-top: 18px; font-size: 12px; color: var(--faint); text-align: center; }
 
-/* Section heading: serif left, mono right, as in the reference. */
-.head { display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: end; }
-.eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px; font-size: 12px; color: var(--muted); }
-.eyebrow i { width: 18px; height: 18px; border-radius: 5px; background: var(--accent); display: inline-block; }
+/* Sections: plain heading, one paragraph, one film. */
+section { padding: 120px 0 0; }
+h2 { font-size: clamp(28px, 4vw, 38px); line-height: 1.15; }
+section > .wrap > p { max-width: 600px; margin-top: 14px; font-size: 17px; }
+.names { margin-top: 18px; font-size: 14px; color: var(--faint); }
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 32px; }
+.steps h3, .features h3 { font-size: 16px; }
+.steps p, .features p { margin-top: 6px; font-size: 14px; }
+.steps .ms { display: block; margin-top: 8px; font: 500 12px/1 var(--mono); color: var(--accent); }
+.features { display: grid; grid-template-columns: 1fr 1fr; gap: 32px 48px; margin-top: 36px; }
 
-/* Transitions: a list beside the film. */
-.split { margin-top: 56px; display: grid; grid-template-columns: 240px 1fr; gap: 32px; align-items: start; }
-.list {
-  padding: 8px;
-  background: var(--panel);
-  border: 1px solid var(--line-strong);
-  border-radius: 14px;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.35);
-}
-.list div { display: flex; justify-content: space-between; padding: 7px 12px; border-radius: 8px; font-size: 13px; color: var(--muted); }
-.list div.on { background: rgba(255,255,255,0.07); color: var(--text); }
-.list div small { color: var(--faint); font-size: 11px; }
-.split .bezel { margin: 0; }
+.download { text-align: center; padding-bottom: 40px; }
+.download .install { margin-top: 32px; }
+.reqs { max-width: 560px; margin: 24px auto 0; font-size: 13px; color: var(--faint); }
 
-/* Bento grid. */
-.bento { margin-top: 56px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
-.card {
-  position: relative;
-  overflow: hidden;
-  padding: 26px;
-  background: linear-gradient(180deg, #2d2d2d 0%, #262626 100%);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset;
-}
-.card h3 { font-size: 22px; }
-.card p { margin-top: 10px; font-size: 13px; }
-.card code { color: var(--text); font-size: 12px; }
-.span2 { grid-column: span 2; } .span3 { grid-column: span 3; } .span4 { grid-column: span 4; } .span6 { grid-column: span 6; }
-.card .ms { position: absolute; top: 24px; right: 24px; font-size: 12px; color: var(--accent); }
-.card.film { padding: 10px; }
-.card.film video { width: 100%; border-radius: 9px; aspect-ratio: 16 / 9; background: #000; }
-.keys { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 8px; }
-.keys kbd {
-  padding: 6px 10px;
-  border-radius: 7px;
-  background: linear-gradient(180deg, #3a3a3a, #2c2c2c);
-  border: 1px solid var(--line-strong);
-  box-shadow: 0 -2px 0 rgba(0,0,0,0.3) inset;
-  font: 500 12px/1 var(--mono);
-}
-.term {
-  margin-top: 20px;
-  padding: 14px 16px;
-  border-radius: 10px;
-  background: #1a1a1a;
-  border: 1px solid var(--line);
-  font-size: 12px; line-height: 1.8; color: var(--muted);
-}
-.term b { color: var(--text); font-weight: 500; }
-
-/* Install, modeled on the reference's pricing cards. */
-.plans { margin-top: 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.plan { display: flex; flex-direction: column; }
-.plan .note { margin-top: 10px; font-size: 13px; }
-.plan hr { border: 0; border-top: 1px solid var(--line); margin: 22px 0; }
-.plan ul { list-style: none; margin: 0 0 26px; padding: 0; font-size: 13px; color: var(--muted); }
-.plan li { display: flex; gap: 10px; align-items: center; padding: 3px 0; }
-.plan li::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: #8a8984; flex: none; box-shadow: 0 0 0 3px rgba(255,255,255,0.05); }
-.plan .btn { margin-top: auto; justify-content: center; }
-.plan.featured {
-  background:
-    repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 3px),
-    radial-gradient(ellipse 90% 80% at 80% 10%, rgba(165,146,240,0.35), transparent 70%),
-    linear-gradient(160deg, #3b3560 0%, #2a2740 100%);
-  border-color: rgba(165,146,240,0.35);
-}
-.plan.featured li::before { background: var(--accent); }
-.tag { position: absolute; top: 24px; right: 24px; padding: 4px 10px; border-radius: 999px; background: #f0c75e; color: #2a2208; font-size: 11px; font-weight: 500; }
-.cmd {
-  display: flex; align-items: center; gap: 12px;
-  margin-top: 14px;
-  padding: 10px 10px 10px 16px;
-  border-radius: 999px;
-  background: #1a1a1a;
-  border: 1px solid var(--line-strong);
-  min-width: 0;
-}
-.cmd .dollar { color: var(--faint); }
-.cmd code { flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; font-size: 12px; scrollbar-width: none; }
-.cmd code::-webkit-scrollbar { display: none; }
-.copy {
-  flex: none;
-  padding: 7px 12px;
-  border-radius: 999px;
-  border: 1px solid var(--line-strong);
-  background: #2c2c2c;
-  color: var(--text);
-  font: 500 11px/1 var(--mono);
-  cursor: pointer;
-}
-.cmd-label { margin-top: 26px; font-size: 12px; color: var(--muted); }
-.reqs { margin-top: 28px; font-size: 12px; color: var(--faint); text-align: center; }
-
-/* Final call, the reference's grille panel. */
-.final { padding: 20px; }
-.final .panel {
-  position: relative;
-  overflow: hidden;
-  padding: 88px 32px;
-  text-align: center;
-  border-radius: 16px;
-  border: 1px solid var(--line);
-  background:
-    repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 3px),
-    radial-gradient(ellipse 60% 70% at 50% 100%, rgba(165,146,240,0.22), transparent 70%),
-    #242424;
-}
-.grille { width: 120px; height: 22px; margin: 0 auto 28px; background: radial-gradient(circle, #0d0d0d 2.2px, transparent 2.6px) 0 0 / 8px 8px; opacity: 0.9; }
-.final p { max-width: 440px; margin: 18px auto 32px; }
-
-footer .inner { padding: 36px 72px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; font-size: 12px; color: var(--muted); }
-.by { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--text); font-size: 13px; }
-.by img { width: 22px; height: 22px; }
-footer .links { display: flex; gap: 22px; }
+footer { max-width: 880px; margin: 80px auto 0; padding: 28px 24px 40px; display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
+.by { display: flex; align-items: center; gap: 8px; text-decoration: none; color: var(--text); }
+.by span { color: var(--muted); }
+.by img { width: 20px; height: 20px; }
+footer .links { display: flex; gap: 20px; }
 footer .links a { text-decoration: none; }
 footer .links a:hover { color: var(--text); }
 
-.reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.7s ease, transform 0.7s ease; }
-.reveal.in { opacity: 1; transform: none; }
-@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } }
-
-@media (max-width: 900px) {
-  .inner { padding: 80px 28px; }
-  .head { grid-template-columns: 1fr; gap: 18px; }
-  .split { grid-template-columns: 1fr; }
-  .list { display: grid; grid-template-columns: repeat(3, 1fr); }
-  .list div small { display: none; }
-  .bento { grid-template-columns: 1fr 1fr; }
-  .span2, .span3 { grid-column: span 1; }
-  .span4, .span6 { grid-column: span 2; }
-  .plans { grid-template-columns: 1fr; }
-  nav .links { display: none; }
-  nav .btn { margin-left: auto; }
+@media (max-width: 720px) {
+  nav .links a:not(:last-child) { display: none; }
+  .hero { padding-top: 40px; }
+  .hero > img { width: 80px; height: 80px; }
+  .stats { grid-template-columns: 1fr; gap: 20px; }
+  .steps { grid-template-columns: 1fr 1fr; }
+  .features { grid-template-columns: 1fr; gap: 24px; }
+  section { padding-top: 88px; }
+  .film { margin-top: 44px; }
 }
-@media (max-width: 600px) {
-  .inner { padding: 64px 16px; }
-  .hero .inner { padding-top: 64px; }
-  .bezel { margin-top: 44px; padding: 6px; border-radius: 16px; }
-  .stats { grid-template-columns: 1fr; }
-  .stat { border-right: 0; border-bottom: 1px solid var(--line); padding: 28px 16px; }
-  .stat:last-child { border-bottom: 0; }
-  .bento { grid-template-columns: 1fr; }
-  .span2, .span3, .span4, .span6 { grid-column: span 1; }
-  .list { grid-template-columns: repeat(2, 1fr); }
-  .final { padding: 12px; }
-  .final .panel { padding: 64px 18px; }
-  footer .inner { padding: 28px 16px; }
-  nav { gap: 12px; }
-  .brand { font-size: 19px; }
-  .sound { right: 14px; bottom: 14px; }
+@media (max-width: 420px) {
+  .wrap, nav { padding-left: 16px; padding-right: 16px; }
+  .steps { grid-template-columns: 1fr; }
+  .tabs button { padding: 11px 14px; }
 }
 </style>
 </head>
-<body id="top">
+<body>
 
-<div class="nav-wrap">
-  <nav>
-    <a class="brand" href="#top"><img src="media/icon.png" alt="">Spacewalk</a>
-    <div class="links">
-      <a href="#instant">Instant</a>
-      <a href="#transitions">Transitions</a>
-      <a href="#how">How it works</a>
-      <a href="#install">Install</a>
-      <a href="https://github.com/InsaneArts/Spacewalk">GitHub</a>
-    </div>
-    <a class="btn cream" href="https://github.com/InsaneArts/Spacewalk/releases/latest/download/Spacewalk.dmg"><svg viewBox="0 0 384 512" fill="currentColor" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>Download for Mac</a>
-  </nav>
-</div>
-
-<div class="frame">
-
-<header class="hero grain" id="instant">
-  <div class="inner">
-    <span class="badge"><img src="media/icon.png" alt="">Free and open source · MIT</span>
-    <h1>Spaces, without<br>the <em>wait</em>.</h1>
-    <p class="lede">Spacewalk switches macOS Spaces instantly, or with one of twelve transitions you choose. No window manager, no SIP changes.</p>
-    <div class="cta">
-      <a class="btn cream big" href="https://github.com/InsaneArts/Spacewalk/releases/latest/download/Spacewalk.dmg"><svg viewBox="0 0 384 512" fill="currentColor" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>Download for Mac</a>
-    </div>
-    <p class="fine">macOS 26.6 or later · Apple Silicon · Notarized · or <a href="#install">install with Homebrew</a></p>
-    <div class="bezel">
-      <video src="media/instant.mp4" poster="media/instant-poster.jpg" autoplay muted loop playsinline preload="metadata"></video>
-      <button class="sound" type="button" aria-pressed="false">Sound on</button>
-    </div>
+<nav>
+  <a class="brand" href="#"><img src="media/icon.png" alt="">Spacewalk</a>
+  <div class="links">
+    <a href="#transitions">Transitions</a>
+    <a href="#how">How it works</a>
+    <a href="#features">Features</a>
+    <a href="https://github.com/InsaneArts/Spacewalk">GitHub</a>
   </div>
-</header>
+</nav>
 
-<section>
-  <div class="stats reveal">
-    <div class="stat"><b>≈ 0.5 s</b><span>the stock macOS slide, every switch</span></div>
-    <div class="stat us"><b>60–110 ms</b><span>Spacewalk, a Space you haven't visited yet</span></div>
-    <div class="stat us"><b>12 ms</b><span>Spacewalk, once it has seen the Space</span></div>
+<header class="hero wrap">
+  <img src="media/icon.png" alt="">
+  <h1>Spaces, without the wait.</h1>
+  <p class="lede">Spacewalk switches macOS Spaces instantly, or with one of twelve transitions you choose. Free and open source.</p>
+
+  <div class="install" data-install>
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true">Homebrew</button>
+      <button role="tab" aria-selected="false">curl</button>
+    </div>
+    <div class="panel" role="tabpanel"><code>brew install --cask tornikegomareli/tap/spacewalk</code><button class="copy" type="button">Copy</button></div>
+    <div class="panel" role="tabpanel" hidden><code>curl -fsSL https://raw.githubusercontent.com/InsaneArts/Spacewalk/main/install.sh | bash</code><button class="copy" type="button">Copy</button></div>
+  </div>
+  <p class="alt">or <a href="https://github.com/InsaneArts/Spacewalk/releases/latest/download/Spacewalk.dmg">download the .dmg</a> · macOS 26.6+ · Apple Silicon</p>
+
+  <div class="film">
+    <video src="media/instant.mp4" poster="media/instant-poster.jpg" autoplay muted loop playsinline preload="metadata"></video>
+    <button class="sound" type="button">Sound on</button>
+  </div>
+
+  <div class="stats">
+    <div><b>≈ 0.5 s</b><span>the stock macOS slide</span></div>
+    <div class="us"><b>60–110 ms</b><span>Spacewalk, first visit to a Space</span></div>
+    <div class="us"><b>12 ms</b><span>Spacewalk, after that</span></div>
   </div>
   <p class="source">macOS measured on a 60 fps recording. Spacewalk from <a href="https://github.com/InsaneArts/Spacewalk/blob/main/docs/AUDIT.md">docs/AUDIT.md</a>.</p>
-</section>
-
-<section class="manifesto">
-  <div class="inner">
-    <div class="narrow reveal">
-      <p>Spacewalk is what happens when you stop waiting for the slide.</p>
-      <p>Press <span class="tok g"><i>⌃</i>⌃→</span> and the next Space is <span class="tok v"><i>✦</i>already there</span>. Want a little motion? Pick a <span class="tok y"><i>◆</i>cube</span>, a flip or a tilt, and watch it play at 100 Hz.</p>
-      <p>It stays out of the way. A menu bar item, a config file, and a command line.</p>
-    </div>
-  </div>
-</section>
+</header>
 
 <section id="transitions">
-  <div class="inner">
-    <div class="head reveal">
-      <div>
-        <div class="eyebrow"><i></i>Twelve transitions</div>
-        <h2>Or beautifully<br><em>animated</em>.</h2>
-      </div>
-      <p>Prefer a little motion? Pick one that isn't the slide. Every effect holds a 100 Hz frame, and the Settings preview plays the one you choose.</p>
-    </div>
-    <div class="split reveal">
-      <div class="list" aria-label="Transitions">
-        <div class="on">Instant<small>default</small></div>
-        <div>Cube<small>3D</small></div>
-        <div>Flip<small>3D</small></div>
-        <div>Depth<small>3D</small></div>
-        <div>Tilt<small>3D</small></div>
-        <div>Carousel<small>3D</small></div>
-        <div>Swap<small>2D</small></div>
-        <div>Slide<small>2D</small></div>
-        <div>Fade<small>2D</small></div>
-        <div>Zoom<small>2D</small></div>
-        <div>Reveal<small>2D</small></div>
-        <div>Stack<small>2D</small></div>
-      </div>
-      <div class="bezel">
-        <video src="media/transitions.mp4" poster="media/transitions-poster.jpg" muted loop playsinline preload="none" data-autoplay></video>
-        <button class="sound" type="button" aria-pressed="false">Sound on</button>
-      </div>
+  <div class="wrap">
+    <h2>Or animated, your way.</h2>
+    <p>Prefer a little motion? Pick one that isn't the slide. Every effect holds a 100 Hz frame, and the Settings preview plays the one you choose.</p>
+    <p class="names">Instant · Slide · Depth · Tilt · Carousel · Fade · Zoom · Cube · Flip · Swap · Reveal · Stack</p>
+    <div class="film">
+      <video src="media/transitions.mp4" poster="media/transitions-poster.jpg" muted loop playsinline preload="none" data-autoplay></video>
+      <button class="sound" type="button">Sound on</button>
     </div>
   </div>
 </section>
 
 <section id="how">
-  <div class="inner">
-    <div class="head reveal">
-      <div>
-        <div class="eyebrow"><i></i>How it works</div>
-        <h2>What happens in a<br><em>tenth</em> of a second.</h2>
-      </div>
-      <p>Spacewalk lets the Dock do the switching, so macOS stays consistent. It only replaces what you see while it happens.</p>
+  <div class="wrap">
+    <h2>What happens in a tenth of a second.</h2>
+    <p>Spacewalk lets the Dock do the switching, so macOS stays consistent. It only replaces what you see while it happens.</p>
+    <div class="steps">
+      <div><h3>Freeze</h3><p>The last frame from a capture stream covers the screen.</p><span class="ms">12–18 ms</span></div>
+      <div><h3>Switch</h3><p>A Dock swipe with nothing left to animate commits the switch.</p><span class="ms">30–140 ms</span></div>
+      <div><h3>Capture</h3><p>The first new frame becomes the destination.</p><span class="ms">10–25 ms</span></div>
+      <div><h3>Animate</h3><p>Core Animation plays your transition, then the overlay hides.</p><span class="ms">your choice</span></div>
     </div>
-    <div class="bento reveal">
-      <div class="card film span6">
-        <video src="media/how-it-works.mp4" poster="media/how-it-works-poster.jpg" muted loop playsinline preload="none" data-autoplay></video>
-        <button class="sound" type="button" aria-pressed="false">Sound on</button>
-      </div>
-      <div class="card span3"><span class="ms">12–18 ms</span><h3>Freeze</h3><p>The last frame from a capture stream covers the screen.</p></div>
-      <div class="card span3"><span class="ms">30–140 ms</span><h3>Switch</h3><p>A Dock swipe with nothing left to animate commits the switch.</p></div>
-      <div class="card span3"><span class="ms">10–25 ms</span><h3>Capture</h3><p>The first new frame becomes the destination.</p></div>
-      <div class="card span3"><span class="ms">your choice</span><h3>Animate</h3><p>Core Animation plays your transition, then the overlay hides.</p></div>
+    <div class="film">
+      <video src="media/how-it-works.mp4" poster="media/how-it-works-poster.jpg" muted loop playsinline preload="none" data-autoplay></video>
+      <button class="sound" type="button">Sound on</button>
     </div>
   </div>
 </section>
 
-<section>
-  <div class="inner">
-    <div class="head reveal">
-      <div>
-        <div class="eyebrow"><i></i>Features</div>
-        <h2>Made for people who<br>live in <em>Spaces</em>.</h2>
-      </div>
-      <p>Everything you reach for when you switch Spaces a hundred times a day, and nothing you don't.</p>
-    </div>
-    <div class="bento reveal">
-      <div class="card span4">
-        <h3>Shortcuts</h3>
-        <p>⌃1 to ⌃9, next, previous, back and forth, or take over ⌃← and ⌃→. Bind a key to an app to jump to its Space.</p>
-        <div class="keys"><kbd>⌃ 1</kbd><kbd>⌃ 2</kbd><kbd>⌃ 3</kbd><kbd>⌃ ←</kbd><kbd>⌃ →</kbd></div>
-      </div>
-      <div class="card span2"><h3>Follow your fingers</h3><p>Three-finger swipes play your transition and track the gesture. A haptic tick marks the point where lifting will switch.</p></div>
-      <div class="card span2"><h3>Overview</h3><p>Every Space as a live picture with its name and app icons. Arrows, digits, typing or a click take you there.</p></div>
-      <div class="card span2"><h3>Names and a menu bar</h3><p>Name your Spaces. The menu bar shows where you are, and an optional bar lists every Space with its apps.</p></div>
-      <div class="card span2"><h3>A config file</h3><p>Every setting lives in <code>~/.config/spacewalk/config.toml</code>, reloaded when you save it.</p></div>
-      <div class="card span6">
-        <h3>A command line</h3>
-        <p>Script anything from your shell, a launcher or a hotkey tool.</p>
-        <div class="term"><b>$ spacewalk next</b><br><b>$ spacewalk effect cube</b><br><b>$ spacewalk overview</b></div>
-      </div>
+<section id="features">
+  <div class="wrap">
+    <h2>Made for people who live in Spaces.</h2>
+    <div class="features">
+      <div><h3>Shortcuts</h3><p>⌃1 to ⌃9, next, previous, back and forth, or take over ⌃← and ⌃→. Bind a key to an app to jump to its Space.</p></div>
+      <div><h3>Follow your fingers</h3><p>Three-finger swipes play your transition and track the gesture. A haptic tick marks the point where lifting will switch.</p></div>
+      <div><h3>Overview</h3><p>Every Space as a live picture with its name and app icons. Arrows, digits, typing or a click take you there.</p></div>
+      <div><h3>Names and a menu bar</h3><p>Name your Spaces. The menu bar shows where you are, and an optional bar lists every Space with its apps.</p></div>
+      <div><h3>A config file</h3><p>Every setting lives in <code>~/.config/spacewalk/config.toml</code>, reloaded when you save it.</p></div>
+      <div><h3>A command line</h3><p><code>spacewalk next</code>, <code>spacewalk effect cube</code>, <code>spacewalk overview</code>. Script anything.</p></div>
     </div>
   </div>
 </section>
 
-<section id="install">
-  <div class="inner">
-    <div class="reveal" style="text-align: center">
-      <h2>Get Spacewalk</h2>
-      <p style="margin-top: 14px">Free and open source. Pick the way you install apps.</p>
-    </div>
-    <div class="plans reveal">
-      <div class="card plan">
-        <h3>Homebrew or Terminal</h3>
-        <p class="note">For people who live in a shell.</p>
-        <hr>
-        <p class="cmd-label" style="margin-top: 0">Homebrew, with the <code>spacewalk</code> command on your PATH</p>
-        <div class="cmd"><span class="dollar">$</span><code>brew install --cask tornikegomareli/tap/spacewalk</code><button class="copy" type="button">Copy</button></div>
-        <p class="cmd-label">Terminal, checked with Gatekeeper, no sudo</p>
-        <div class="cmd"><span class="dollar">$</span><code>curl -fsSL https://raw.githubusercontent.com/InsaneArts/Spacewalk/main/install.sh | bash</code><button class="copy" type="button">Copy</button></div>
+<section class="download" id="install">
+  <div class="wrap">
+    <h2>Get Spacewalk.</h2>
+    <div class="install" data-install>
+      <div class="tabs" role="tablist">
+        <button role="tab" aria-selected="true">Homebrew</button>
+        <button role="tab" aria-selected="false">curl</button>
       </div>
-      <div class="card plan featured">
-        <span class="tag">Easiest</span>
-        <h3>Disk image</h3>
-        <p class="note" style="color: #cfc8ee">Drag Spacewalk to Applications.</p>
-        <hr>
-        <ul>
-          <li>Signed and notarized by Apple</li>
-          <li>Updates arrive in the app</li>
-          <li>Apple Silicon, macOS 26.6 or later</li>
-          <li>Free and open source, MIT</li>
-        </ul>
-        <a class="btn cream big" href="https://github.com/InsaneArts/Spacewalk/releases/latest/download/Spacewalk.dmg"><svg viewBox="0 0 384 512" fill="currentColor" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>Download Spacewalk.dmg</a>
-      </div>
+      <div class="panel" role="tabpanel"><code>brew install --cask tornikegomareli/tap/spacewalk</code><button class="copy" type="button">Copy</button></div>
+      <div class="panel" role="tabpanel" hidden><code>curl -fsSL https://raw.githubusercontent.com/InsaneArts/Spacewalk/main/install.sh | bash</code><button class="copy" type="button">Copy</button></div>
     </div>
-    <p class="reqs reveal">On first launch Spacewalk asks for Screen Recording, to see your Spaces, and Accessibility, to switch them.</p>
-  </div>
-</section>
-
-<section class="final">
-  <div class="panel reveal">
-    <div class="grille"></div>
-    <h2>Switch Spaces. Skip the <em>wait</em>.</h2>
-    <p>One download, two permissions, and the slide is gone.</p>
-    <a class="btn cream big" href="https://github.com/InsaneArts/Spacewalk/releases/latest/download/Spacewalk.dmg"><svg viewBox="0 0 384 512" fill="currentColor" aria-hidden="true"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>Download for Mac</a>
+    <p class="alt">or <a href="https://github.com/InsaneArts/Spacewalk/releases/latest/download/Spacewalk.dmg">download the .dmg</a></p>
+    <p class="reqs">Needs macOS 26.6 or later on Apple Silicon. On first launch it asks for Screen Recording, to see your Spaces, and Accessibility, to switch them. Updates arrive in the app, signed and verified.</p>
   </div>
 </section>
 
 <footer>
-  <div class="inner">
-    <a class="by" href="https://github.com/InsaneArts"><span style="color: var(--muted)">by</span><img src="media/insanearts-mark.png" alt="">InsaneArts</a>
-    <div class="links">
-      <a href="https://github.com/InsaneArts/Spacewalk">GitHub</a>
-      <a href="https://github.com/InsaneArts/Spacewalk/releases">Releases</a>
-      <a href="https://github.com/InsaneArts/Spacewalk/issues">Issues</a>
-    </div>
+  <a class="by" href="https://github.com/InsaneArts"><span>by</span><img src="media/insanearts-mark.png" alt="">InsaneArts</a>
+  <div class="links">
+    <a href="https://github.com/InsaneArts/Spacewalk">GitHub</a>
+    <a href="https://github.com/InsaneArts/Spacewalk/releases">Releases</a>
+    <a href="https://github.com/InsaneArts/Spacewalk/issues">Issues</a>
   </div>
 </footer>
 
-</div>
-
 <script>
+// Install tabs.
+for (const box of document.querySelectorAll('[data-install]')) {
+  const tabs = [...box.querySelectorAll('[role=tab]')];
+  const panels = [...box.querySelectorAll('[role=tabpanel]')];
+  tabs.forEach((tab, i) => tab.addEventListener('click', () => {
+    tabs.forEach((t, j) => t.setAttribute('aria-selected', String(i === j)));
+    panels.forEach((p, j) => { p.hidden = i !== j; });
+  }));
+}
 // Copy buttons.
 for (const button of document.querySelectorAll('.copy')) {
   button.addEventListener('click', async () => {
@@ -551,30 +249,21 @@ for (const button of document.querySelectorAll('.sound')) {
   const video = button.parentElement.querySelector('video');
   button.addEventListener('click', () => {
     const on = video.muted;
-    for (const v of videos) { v.muted = true; }
-    for (const b of document.querySelectorAll('.sound')) { b.textContent = 'Sound on'; b.setAttribute('aria-pressed', 'false'); }
-    if (on) {
-      video.muted = false; video.currentTime = 0; video.play();
-      button.textContent = 'Sound off'; button.setAttribute('aria-pressed', 'true');
-    }
+    for (const v of videos) v.muted = true;
+    for (const b of document.querySelectorAll('.sound')) b.textContent = 'Sound on';
+    if (on) { video.muted = false; video.currentTime = 0; video.play(); button.textContent = 'Sound off'; }
   });
 }
-// Films below the fold start when they come into view and pause when they leave.
+// Films below the fold play while in view.
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const seen = new IntersectionObserver((entries) => {
-  for (const entry of entries) {
-    const video = entry.target;
-    if (entry.isIntersecting && !reduced) { video.preload = 'auto'; video.play().catch(() => {}); }
-    else if (!entry.isIntersecting) { video.pause(); }
+  for (const { target, isIntersecting } of entries) {
+    if (isIntersecting && !reduced) { target.preload = 'auto'; target.play().catch(() => {}); }
+    else if (!isIntersecting) target.pause();
   }
 }, { threshold: 0.35 });
 for (const video of document.querySelectorAll('video[data-autoplay]')) seen.observe(video);
 if (reduced) for (const video of videos) { video.removeAttribute('autoplay'); video.pause(); video.controls = true; }
-// Sections rise in as they arrive.
-const rise = new IntersectionObserver((entries) => {
-  for (const entry of entries) if (entry.isIntersecting) { entry.target.classList.add('in'); rise.unobserve(entry.target); }
-}, { threshold: 0.12 });
-for (const el of document.querySelectorAll('.reveal')) rise.observe(el);
 </script>
 </body>
 </html>
