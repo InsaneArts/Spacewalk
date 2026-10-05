@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spacewalk — Spaces, without the wait</title>
+<meta name="description" content="Spacewalk switches macOS Spaces instantly, or with one of twelve transitions you choose. Free and open source, by InsaneArts.">
+<meta property="og:title" content="Spacewalk — Spaces, without the wait">
+<meta property="og:description" content="Switch macOS Spaces instantly, or with one of twelve transitions you choose. Free and open source.">
+<meta property="og:image" content="https://insanearts.github.io/Spacewalk/media/og.jpg">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="media/favicon.png">
+<link rel="apple-touch-icon" href="media/icon.png">
+<style>
+:root {
+  --bg: #050506;
+  --surface: #111114;
+  --raised: #1a1a1f;
+  --line: rgba(255, 255, 255, 0.09);
+  --ink: #f5f5f7;
+  --muted: #86868b;
+  --soft: #a1a1a6;
+  --violet: #a592f0;
+  --violet-deep: #644da1;
+  --radius: 22px;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+a { color: inherit; }
+.wrap { width: min(1120px, calc(100% - 32px)); margin: 0 auto; }
+
+/* nav */
+nav {
+  position: sticky; top: 0; z-index: 10;
+  backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px);
+  background: rgba(5, 5, 6, 0.72);
+  border-bottom: 1px solid var(--line);
+}
+nav .wrap { display: flex; align-items: center; gap: 24px; height: 56px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -0.01em; text-decoration: none; }
+.brand img { width: 26px; height: 26px; }
+nav .links { display: flex; gap: 22px; margin-left: auto; font-size: 14px; color: var(--soft); }
+nav .links a { text-decoration: none; }
+nav .links a:hover { color: var(--ink); }
+.pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 7px 14px; border-radius: 999px; font-size: 14px; font-weight: 500; text-decoration: none;
+  background: var(--ink); color: #000;
+}
+.pill.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+@media (max-width: 720px) { nav .links { display: none; } nav .pill { margin-left: auto; } }
+
+/* hero */
+.hero { position: relative; text-align: center; padding: 96px 0 40px; }
+.hero::before {
+  content: ""; position: absolute; left: 50%; top: 40px; width: 900px; height: 900px; transform: translateX(-50%);
+  background: radial-gradient(closest-side, rgba(116, 92, 255, 0.22), rgba(116, 92, 255, 0.06) 55%, transparent);
+  pointer-events: none; z-index: -1;
+}
+.hero .icon { width: 132px; height: 132px; filter: drop-shadow(0 18px 40px rgba(80, 60, 200, 0.45)); }
+h1 { font-size: clamp(44px, 8vw, 88px); line-height: 1.04; letter-spacing: -0.035em; margin: 28px 0 0; font-weight: 700; }
+.lede { font-size: clamp(19px, 2.4vw, 24px); color: var(--soft); max-width: 680px; margin: 22px auto 0; letter-spacing: -0.01em; }
+.cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 36px; }
+.cta .pill { padding: 12px 22px; font-size: 16px; }
+.fine { margin-top: 14px; font-size: 13px; color: var(--muted); }
+
+/* film frames */
+.film {
+  position: relative; margin: 56px auto 0; border-radius: var(--radius); overflow: hidden;
+  border: 1px solid var(--line); background: #000;
+  box-shadow: 0 40px 120px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+.film video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; }
+.sound {
+  position: absolute; right: 14px; bottom: 14px; border: 0; cursor: pointer;
+  padding: 8px 14px; border-radius: 999px; font: 500 13px/1 inherit; color: var(--ink);
+  background: rgba(20, 20, 24, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+
+/* numbers */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 72px; background: var(--line); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); }
+.stat { background: var(--surface); padding: 32px 28px; }
+.stat b { display: block; font-size: clamp(32px, 4vw, 44px); letter-spacing: -0.03em; font-weight: 600; }
+.stat span { color: var(--muted); font-size: 15px; }
+.stat.us b { color: var(--violet); }
+@media (max-width: 720px) { .stats { grid-template-columns: 1fr; } }
+.source { font-size: 12px; color: var(--muted); margin-top: 12px; text-align: center; }
+
+/* sections */
+section { padding: 120px 0 0; }
+.eyebrow { color: var(--violet); font-weight: 600; font-size: 15px; letter-spacing: 0.01em; }
+h2 { font-size: clamp(34px, 5vw, 56px); letter-spacing: -0.03em; line-height: 1.08; margin: 10px 0 0; font-weight: 700; }
+.intro { color: var(--soft); font-size: 19px; max-width: 720px; margin: 18px 0 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; }
+.chip { padding: 8px 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: 15px; color: var(--soft); }
+.chip.on { color: var(--ink); border-color: rgba(165, 146, 240, 0.5); background: rgba(100, 77, 161, 0.18); }
+
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 40px; counter-reset: step; }
+.step { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 22px; }
+.step::before { counter-increment: step; content: counter(step); display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: rgba(100, 77, 161, 0.25); color: var(--violet); font-weight: 600; font-size: 14px; }
+.step h3 { margin: 14px 0 6px; font-size: 18px; letter-spacing: -0.01em; }
+.step p { margin: 0; color: var(--muted); font-size: 15px; }
+.step .ms { display: block; margin-top: 10px; font: 500 14px ui-monospace, "SF Mono", Menlo, monospace; color: var(--violet); }
+@media (max-width: 900px) { .steps { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .steps { grid-template-columns: 1fr; } }
+
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 40px; }
+.feature { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 24px; }
+.feature h3 { margin: 0 0 8px; font-size: 18px; letter-spacing: -0.01em; }
+.feature p { margin: 0; color: var(--muted); font-size: 15px; }
+@media (max-width: 900px) { .features { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .features { grid-template-columns: 1fr; } }
+
+/* install */
+.install { margin-top: 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.way { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 24px; display: flex; flex-direction: column; }
+.way h3 { margin: 0; font-size: 19px; letter-spacing: -0.01em; }
+.way p { color: var(--muted); font-size: 15px; margin: 6px 0 18px; flex: 1; }
+.code { min-width: 0; display: flex; align-items: center; gap: 10px; background: #08080a; border: 1px solid var(--line); border-radius: 12px; padding: 12px 12px 12px 14px; }
+.code code { flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; font: 13.5px/1.5 ui-monospace, "SF Mono", Menlo, monospace; color: var(--ink); scrollbar-width: none; }
+.code code::-webkit-scrollbar { display: none; }
+.copy { flex: none; border: 1px solid var(--line); background: var(--raised); color: var(--soft); border-radius: 8px; padding: 6px 10px; font: 500 12px/1 inherit; cursor: pointer; }
+.copy:hover { color: var(--ink); }
+.way .pill { align-self: flex-start; padding: 11px 20px; font-size: 15px; }
+@media (max-width: 900px) { .install { grid-template-columns: 1fr; } }
+.reqs { margin-top: 20px; color: var(--muted); font-size: 14px; }
+.reqs b { color: var(--soft); font-weight: 500; }
+
+footer { margin-top: 140px; border-top: 1px solid var(--line); padding: 40px 0 60px; color: var(--muted); font-size: 14px; }
+footer .wrap { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.by { display: inline-flex; align-items: center; gap: 9px; color: var(--ink); text-decoration: none; font-weight: 600; }
+.by img { height: 22px; width: auto; }
+footer .right { margin-left: auto; display: flex; gap: 20px; }
+footer a { text-decoration: none; }
+footer a:hover { color: var(--ink); }
+
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.9s cubic-bezier(.16, 1, .3, 1), transform 0.9s cubic-bezier(.16, 1, .3, 1); }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="media/icon.png" alt="">Spacewalk</a>
+    <div class="links">
+      <a href="#instant">Instant</a>
+      <a href="#transitions">Transitions</a>
+      <a href="#how">How it works</a>
+      <a href="#install">Install</a>
+    </div>
+    <a class="pill" href="#install">Download</a>
+  </div>
+</nav>
+
+<header class="hero wrap" id="top">
+  <img class="icon" src="media/icon.png" alt="Spacewalk app icon">
+  <h1>Spaces, without<br>the wait.</h1>
+  <p class="lede">Spacewalk switches macOS Spaces instantly, or with one of twelve transitions you choose. No window manager, no SIP changes. Free and open source.</p>
+  <div class="cta">
+    <a class="pill" href="https://github.com/InsaneArts/Spacewalk/releases/latest/download/Spacewalk.dmg">Download for Mac</a>
+    <a class="pill ghost" href="#install">Homebrew or Terminal</a>
+  </div>
+  <p class="fine">macOS 26.6 or later · Apple Silicon · Notarized by Apple</p>
+
+  <div class="film reveal" id="instant">
+    <video src="media/instant.mp4" poster="media/instant-poster.jpg" autoplay muted loop playsinline preload="metadata"></video>
+    <button class="sound" type="button" aria-pressed="false">Sound on</button>
+  </div>
+
+  <div class="stats reveal">
+    <div class="stat"><b>≈ 0.5 s</b><span>the stock macOS slide, every switch</span></div>
+    <div class="stat us"><b>60–110 ms</b><span>Spacewalk, a Space you haven't visited yet</span></div>
+    <div class="stat us"><b>12 ms</b><span>Spacewalk, once it has seen the Space</span></div>
+  </div>
+  <p class="source">macOS measured on a 60 fps recording. Spacewalk from <a href="https://github.com/InsaneArts/Spacewalk/blob/main/docs/AUDIT.md">docs/AUDIT.md</a>.</p>
+</header>
+
+<section class="wrap" id="transitions">
+  <div class="reveal">
+    <div class="eyebrow">Twelve transitions</div>
+    <h2>Or beautifully animated.</h2>
+    <p class="intro">Prefer a little motion? Pick one that isn't the slide. Every effect holds a 100 Hz frame, and the Settings preview plays the one you choose.</p>
+    <div class="chips">
+      <span class="chip on">Instant</span><span class="chip">Slide</span><span class="chip">Depth</span><span class="chip">Tilt</span>
+      <span class="chip">Carousel</span><span class="chip">Fade</span><span class="chip">Zoom</span><span class="chip on">Cube</span>
+      <span class="chip">Flip</span><span class="chip">Swap</span><span class="chip">Reveal</span><span class="chip">Stack</span>
+    </div>
+  </div>
+  <div class="film reveal">
+    <video src="media/transitions.mp4" poster="media/transitions-poster.jpg" muted loop playsinline preload="none" data-autoplay></video>
+    <button class="sound" type="button" aria-pressed="false">Sound on</button>
+  </div>
+</section>
+
+<section class="wrap" id="how">
+  <div class="reveal">
+    <div class="eyebrow">How it works</div>
+    <h2>What happens in a tenth of a second.</h2>
+    <p class="intro">Spacewalk lets the Dock do the switching, so macOS stays consistent. It only replaces what you see while it happens.</p>
+  </div>
+  <div class="steps reveal">
+    <div class="step"><h3>Freeze</h3><p>The last frame from a capture stream covers the screen.</p><span class="ms">12–18 ms</span></div>
+    <div class="step"><h3>Switch</h3><p>A Dock swipe with nothing left to animate commits the switch.</p><span class="ms">30–140 ms</span></div>
+    <div class="step"><h3>Capture</h3><p>The first new frame becomes the destination.</p><span class="ms">10–25 ms</span></div>
+    <div class="step"><h3>Animate</h3><p>Core Animation plays your transition, then the overlay hides.</p><span class="ms">your choice</span></div>
+  </div>
+  <div class="film reveal">
+    <video src="media/how-it-works.mp4" poster="media/how-it-works-poster.jpg" muted loop playsinline preload="none" data-autoplay></video>
+    <button class="sound" type="button" aria-pressed="false">Sound on</button>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="reveal">
+    <div class="eyebrow">Everything else</div>
+    <h2>Made for people who live in Spaces.</h2>
+  </div>
+  <div class="features reveal">
+    <div class="feature"><h3>Follow your fingers</h3><p>Three-finger swipes play your transition and track the gesture. A haptic tick marks the point where lifting will switch.</p></div>
+    <div class="feature"><h3>Overview</h3><p>Every Space as a live picture with its name and app icons. Arrows, digits, typing or a click take you there.</p></div>
+    <div class="feature"><h3>Shortcuts</h3><p>⌃1 to ⌃9, next, previous, back and forth, or take over ⌃← and ⌃→. Bind a key to an app to jump to its Space.</p></div>
+    <div class="feature"><h3>Names and a menu bar</h3><p>Name your Spaces. The menu bar shows where you are, and an optional bar lists every Space with its apps.</p></div>
+    <div class="feature"><h3>A config file</h3><p>Every setting lives in <code>~/.config/spacewalk/config.toml</code>, reloaded when you save it.</p></div>
+    <div class="feature"><h3>A command line</h3><p><code>spacewalk next</code>, <code>spacewalk effect cube</code>, <code>spacewalk overview</code>. Script anything.</p></div>
+  </div>
+</section>
+
+<section class="wrap" id="install">
+  <div class="reveal">
+    <div class="eyebrow">Install</div>
+    <h2>Three ways in.</h2>
+  </div>
+  <div class="install reveal">
+    <div class="way">
+      <h3>Homebrew</h3>
+      <p>Installs the app and puts the <code>spacewalk</code> command on your PATH.</p>
+      <div class="code"><code>brew install --cask tornikegomareli/tap/spacewalk</code><button class="copy" type="button">Copy</button></div>
+    </div>
+    <div class="way">
+      <h3>Terminal</h3>
+      <p>Downloads the latest notarized release, checks it with Gatekeeper and installs it. No sudo.</p>
+      <div class="code"><code>curl -fsSL https://raw.githubusercontent.com/InsaneArts/Spacewalk/main/install.sh | bash</code><button class="copy" type="button">Copy</button></div>
+    </div>
+    <div class="way">
+      <h3>Download</h3>
+      <p>The disk image from the latest release. Drag Spacewalk to Applications.</p>
+      <a class="pill" href="https://github.com/InsaneArts/Spacewalk/releases/latest/download/Spacewalk.dmg">Download Spacewalk.dmg</a>
+    </div>
+  </div>
+  <p class="reqs reveal"><b>Needs</b> macOS 26.6 or later on Apple Silicon, and two permissions it asks for on first launch: Screen Recording, to see your Spaces, and Accessibility, to switch them. Updates arrive in the app, signed and verified.</p>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a class="by" href="https://github.com/InsaneArts"><span style="color: var(--muted); font-weight: 500">by</span><img src="media/insanearts-mark.png" alt="">InsaneArts</a>
+    <span>MIT License</span>
+    <div class="right">
+      <a href="https://github.com/InsaneArts/Spacewalk">GitHub</a>
+      <a href="https://github.com/InsaneArts/Spacewalk/releases">Releases</a>
+      <a href="https://github.com/InsaneArts/Spacewalk/issues">Issues</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Copy buttons.
+for (const button of document.querySelectorAll('.copy')) {
+  button.addEventListener('click', async () => {
+    const text = button.parentElement.querySelector('code').textContent;
+    try { await navigator.clipboard.writeText(text); button.textContent = 'Copied'; }
+    catch { button.textContent = 'Select and copy'; }
+    setTimeout(() => { button.textContent = 'Copy'; }, 1600);
+  });
+}
+// Sound toggles: one film plays sound at a time.
+const videos = [...document.querySelectorAll('.film video')];
+for (const button of document.querySelectorAll('.sound')) {
+  const video = button.parentElement.querySelector('video');
+  button.addEventListener('click', () => {
+    const on = video.muted;
+    for (const v of videos) { v.muted = true; }
+    for (const b of document.querySelectorAll('.sound')) { b.textContent = 'Sound on'; b.setAttribute('aria-pressed', 'false'); }
+    if (on) {
+      video.muted = false; video.currentTime = 0; video.play();
+      button.textContent = 'Sound off'; button.setAttribute('aria-pressed', 'true');
+    }
+  });
+}
+// Films below the fold start when they come into view and pause when they leave.
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const seen = new IntersectionObserver((entries) => {
+  for (const entry of entries) {
+    const video = entry.target;
+    if (entry.isIntersecting && !reduced) { video.preload = 'auto'; video.play().catch(() => {}); }
+    else if (!entry.isIntersecting) { video.pause(); }
+  }
+}, { threshold: 0.35 });
+for (const video of document.querySelectorAll('video[data-autoplay]')) seen.observe(video);
+if (reduced) for (const video of videos) { video.removeAttribute('autoplay'); video.pause(); video.controls = true; }
+// Sections rise in as they arrive.
+const rise = new IntersectionObserver((entries) => {
+  for (const entry of entries) if (entry.isIntersecting) { entry.target.classList.add('in'); rise.unobserve(entry.target); }
+}, { threshold: 0.12 });
+for (const el of document.querySelectorAll('.reveal')) rise.observe(el);
+</script>
+</body>
+</html>
