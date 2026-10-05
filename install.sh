@@ -2,12 +2,12 @@
 #
 # Spacewalk installer.
 #
-#   curl -fsSL https://raw.githubusercontent.com/tornikegomareli/Spacewalk/main/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/InsaneArts/Spacewalk/main/install.sh | bash
 #
 # Downloads the latest notarized release from GitHub, checks that Apple's notary service
 # accepted it, copies Spacewalk.app into /Applications, links the `spacewalk` command into
 # ~/.local/bin and launches the app. Nothing is downloaded from anywhere but
-# github.com/tornikegomareli/Spacewalk, and nothing needs sudo.
+# github.com/InsaneArts/Spacewalk, and nothing needs sudo.
 #
 #   --version 0.2.0   install that release instead of the latest
 #   --no-launch       install without opening the app
@@ -17,7 +17,7 @@
 
 set -euo pipefail
 
-REPO="tornikegomareli/Spacewalk"
+REPO="InsaneArts/Spacewalk"
 APP_NAME="Spacewalk"
 CLI_LINK="${SPACEWALK_CLI_LINK:-$HOME/.local/bin/spacewalk}"
 VERSION=""

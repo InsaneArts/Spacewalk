@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/Swift-6-orange.svg" />
   <img src="https://img.shields.io/badge/macOS-26.6+-blue.svg" />
   <img src="https://img.shields.io/badge/Apple%20Silicon-arm64-lightgrey.svg" />
-  <img src="https://github.com/tornikegomareli/Spacewalk/actions/workflows/ci.yml/badge.svg" />
+  <img src="https://github.com/InsaneArts/Spacewalk/actions/workflows/ci.yml/badge.svg" />
 </p>
 
 <p align="center">
@@ -80,7 +80,7 @@ can be bound to an app, so one key goes to whichever Space holds its window.
 With Homebrew:
 
 ```sh
-brew tap tornikegomareli/spacewalk https://github.com/tornikegomareli/Spacewalk
+brew tap insanearts/spacewalk https://github.com/InsaneArts/Spacewalk
 brew install --cask spacewalk
 ```
 
@@ -92,10 +92,10 @@ Or with one line, which downloads the latest notarized release, checks it with G
 copies it to /Applications and links the command into `~/.local/bin`:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/tornikegomareli/Spacewalk/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/InsaneArts/Spacewalk/main/install.sh | bash
 ```
 
-Or grab [**Spacewalk.dmg**](https://github.com/tornikegomareli/Spacewalk/releases/latest/download/Spacewalk.dmg)
+Or grab [**Spacewalk.dmg**](https://github.com/InsaneArts/Spacewalk/releases/latest/download/Spacewalk.dmg)
 from the latest release.
 
 Requirements:
@@ -116,7 +116,7 @@ EdDSA signature before it installs. Settings > General has the switch and a Chec
 
 ```sh
 brew uninstall --cask spacewalk                                   # if installed with Homebrew
-curl -fsSL https://raw.githubusercontent.com/tornikegomareli/Spacewalk/main/install.sh | bash -s -- --uninstall
+curl -fsSL https://raw.githubusercontent.com/InsaneArts/Spacewalk/main/install.sh | bash -s -- --uninstall
 ```
 
 Or quit Spacewalk and drag it to the Trash. Your settings in `~/.config/spacewalk` stay either
@@ -208,7 +208,7 @@ budget are in [`docs/AUDIT.md`](docs/AUDIT.md).
 ## Development
 
 ```sh
-git clone https://github.com/tornikegomareli/Spacewalk.git
+git clone https://github.com/InsaneArts/Spacewalk.git
 cd Spacewalk
 swift build
 swift test

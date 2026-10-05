@@ -4,10 +4,10 @@ cask "spacewalk" do
   # the checksum is a placeholder and the download URL does not resolve.
   sha256 "058a3808ae7c61353f14f886562ba839b73995589bb7284bd4f5306b315d11ec"
 
-  url "https://github.com/tornikegomareli/Spacewalk/releases/download/v#{version}/Spacewalk.dmg"
+  url "https://github.com/InsaneArts/Spacewalk/releases/download/v#{version}/Spacewalk.dmg"
   name "Spacewalk"
   desc "Instant, animated switching between macOS Spaces"
-  homepage "https://github.com/tornikegomareli/Spacewalk"
+  homepage "https://github.com/InsaneArts/Spacewalk"
 
   livecheck do
     url :url

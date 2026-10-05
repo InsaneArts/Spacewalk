@@ -6,7 +6,7 @@ spare time. This guide is the contract for everyone who writes code here, human 
 ## Before you write code
 
 **Open an issue first.** Bugs, features and questions all start in
-[Issues](https://github.com/tornikegomareli/Spacewalk/issues). A pull request implements an
+[Issues](https://github.com/InsaneArts/Spacewalk/issues). A pull request implements an
 issue. One that arrives with no issue behind it may be closed, however good the code is: design
 belongs in the issue, where it is cheap to change.
 

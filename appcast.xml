@@ -4,7 +4,7 @@
         <title>Spacewalk</title>
         <!--
           Sparkle's update feed, served from main at
-          https://raw.githubusercontent.com/tornikegomareli/Spacewalk/main/appcast.xml
+          https://raw.githubusercontent.com/InsaneArts/Spacewalk/main/appcast.xml
 
           Scripts/release.sh regenerates this file with generate_appcast and commits it as part
           of a release, so it is not edited by hand.
@@ -16,13 +16,13 @@
         <item>
             <title>0.1.0</title>
             <pubDate>Sun, 04 Oct 2026 12:42:07 +0400</pubDate>
-            <link>https://github.com/tornikegomareli/Spacewalk</link>
-            <sparkle:fullReleaseNotesLink>https://github.com/tornikegomareli/Spacewalk/releases</sparkle:fullReleaseNotesLink>
+            <link>https://github.com/InsaneArts/Spacewalk</link>
+            <sparkle:fullReleaseNotesLink>https://github.com/InsaneArts/Spacewalk/releases</sparkle:fullReleaseNotesLink>
             <sparkle:version>6</sparkle:version>
             <sparkle:shortVersionString>0.1.0</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>26.6</sparkle:minimumSystemVersion>
             <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
-            <enclosure url="https://github.com/tornikegomareli/Spacewalk/releases/download/v0.1.0/Spacewalk-v0.1.0.zip" length="3426246" type="application/octet-stream" sparkle:edSignature="/d/5X3fvE/rQq60WyE+mOR6ISsZe2L/YOtkz3EvFZ52KRMbdrMi89lLBBABXdyXE+LnFZI+nKm1DmBL3cNPKBQ=="/>
+            <enclosure url="https://github.com/InsaneArts/Spacewalk/releases/download/v0.1.0/Spacewalk-v0.1.0.zip" length="3426246" type="application/octet-stream" sparkle:edSignature="/d/5X3fvE/rQq60WyE+mOR6ISsZe2L/YOtkz3EvFZ52KRMbdrMi89lLBBABXdyXE+LnFZI+nKm1DmBL3cNPKBQ=="/>
         </item>
     </channel>
 </rss>

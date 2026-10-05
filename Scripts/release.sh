@@ -50,7 +50,7 @@ fi
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
-REPO="tornikegomareli/Spacewalk"
+REPO="InsaneArts/Spacewalk"
 TAG="v$VERSION"
 APP_NAME="Spacewalk"
 BUNDLE_ID="dev.tgomareli.spacewalk"
