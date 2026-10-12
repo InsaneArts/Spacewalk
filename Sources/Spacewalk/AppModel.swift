@@ -1,4 +1,5 @@
 import AppKit
+import PermissionFlow
 import ScreenCaptureKit
 import ServiceManagement
 import SpacewalkCore
@@ -28,6 +29,7 @@ final class AppModel {
     private let settingsWindow = SettingsWindowController()
     private let interceptor = SwipeInterceptor()
     private let mouse = MouseTriggers()
+    private let permissionFlow = PermissionFlow.makeController()
 
     init() {
         let loaded = SettingsStore.load()
@@ -49,8 +51,9 @@ final class AppModel {
         watcher.noteWritten(ConfigFile.render(settings))
         watcher.start()
         self.watcher = watcher
-        captureAccess = CaptureAccess.request()
-        accessibilityAccess = SpaceEngine.requestAccessibility()
+        // Read only. Asking here, or capturing before access is granted, makes macOS show its prompt again and again.
+        captureAccess = CaptureAccess.granted
+        accessibilityAccess = SpaceEngine.accessibilityGranted
         registerHotkeys()
         listenForCommands()
         interceptor.onSwipe = { [weak self] direction in self?.perform(direction == .right ? .next : .previous) }
@@ -81,7 +84,7 @@ final class AppModel {
     func refreshDisplays() async {
         captureAccess = CaptureAccess.granted
         accessibilityAccess = SpaceEngine.accessibilityGranted
-        await switcher.attachDisplays()
+        if captureAccess { await switcher.attachDisplays() }
         displayStatus = switcher.displayStatus
         applyInterceptor()
         refreshSpaces()
@@ -240,15 +243,11 @@ final class AppModel {
     }
 
     func openScreenRecordingSettings() {
-        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture") {
-            NSWorkspace.shared.open(url)
-        }
+        permissionFlow.authorize(pane: .screenRecording, suggestedAppURLs: [Bundle.main.bundleURL])
     }
 
     func openAccessibilitySettings() {
-        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility") {
-            NSWorkspace.shared.open(url)
-        }
+        permissionFlow.authorize(pane: .accessibility, suggestedAppURLs: [Bundle.main.bundleURL])
     }
 
     /// Hands ⌃← and ⌃→ to Spacewalk by switching the system's own shortcuts off, or gives them back.

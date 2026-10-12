@@ -16,9 +16,6 @@ public struct CapturedFrame: @unchecked Sendable {
 
 public enum CaptureAccess {
     public static var granted: Bool { CGPreflightScreenCaptureAccess() }
-    /// Shows the system prompt once; later calls only return the current state.
-    @discardableResult
-    public static func request() -> Bool { CGRequestScreenCaptureAccess() }
 }
 
 /// Keeps a ScreenCaptureKit stream open for one display so the latest frame is always at hand.

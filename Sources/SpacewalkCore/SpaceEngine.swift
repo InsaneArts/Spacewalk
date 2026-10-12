@@ -224,12 +224,6 @@ public final class SpaceEngine {
 
     public static var accessibilityGranted: Bool { AXIsProcessTrusted() }
 
-    @discardableResult
-    public static func requestAccessibility() -> Bool {
-        let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
-        return AXIsProcessTrustedWithOptions(options)
-    }
-
     /// The system's own ⌃← and ⌃→ (symbolic hotkeys 79 and 81) consume the keys before any app.
     /// Turn them off live and persist the choice for future logins, with properly typed values.
     public static func setSystemArrowShortcuts(enabled: Bool) {

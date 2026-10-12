@@ -70,6 +70,8 @@ cp "$BIN_DIR/$APP_NAME" "$APP/Contents/MacOS/$APP_NAME"
 cp "$BIN_DIR/$CLI_NAME" "$APP/Contents/MacOS/$CLI_NAME"
 chmod +x "$APP/Contents/MacOS/"*
 cp "$ROOT/Resources/AppIcon/Spacewalk.icns" "$APP/Contents/Resources/Spacewalk.icns"
+# PermissionFlow's strings and images, a SwiftPM resource bundle it looks up in Resources.
+cp -R "$BIN_DIR/PermissionFlow_PermissionFlow.bundle" "$APP/Contents/Resources/"
 
 # SwiftPM leaves the framework next to the executable; the bundle needs it in Frameworks, and
 # the executable needs an rpath that points there.

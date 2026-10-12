@@ -10,8 +10,10 @@ let package = Package(
         .executable(name: "spacewalk-cli", targets: ["SpacewalkCLI"]),
     ],
     dependencies: [
-        // The one third-party dependency: self-updates, signed with EdDSA, from appcast.xml in this repo.
+        // Self-updates, signed with EdDSA, from appcast.xml in this repo.
         .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.10.0"),
+        // Opens the right privacy pane and lets the user drag the app into its list.
+        .package(url: "https://github.com/jaywcjlove/PermissionFlow", from: "2.9.1"),
     ],
     targets: [
         .target(
@@ -21,7 +23,11 @@ let package = Package(
         ),
         .executableTarget(
             name: "Spacewalk",
-            dependencies: ["SpacewalkCore", .product(name: "Sparkle", package: "Sparkle")],
+            dependencies: [
+                "SpacewalkCore",
+                .product(name: "Sparkle", package: "Sparkle"),
+                .product(name: "PermissionFlow", package: "PermissionFlow"),
+            ],
             path: "Sources/Spacewalk",
             swiftSettings: [.swiftLanguageMode(.v5)]
         ),
