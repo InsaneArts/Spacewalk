@@ -1,8 +1,8 @@
 cask "spacewalk" do
-  version "0.1.1"
+  version "0.1.2"
   # Scripts/release.sh rewrites version and sha256 on every release. Until the first release
   # the checksum is a placeholder and the download URL does not resolve.
-  sha256 "c6aa0b3431d22aa1d1a9e8ce8d4cbbc07f81744f884db7c9f359bb2687285b14"
+  sha256 "030430114eb732bbe4f5a343c4893c9b1ef7784e9d6966074f8fb1cccd13071f"
 
   url "https://github.com/InsaneArts/Spacewalk/releases/download/v#{version}/Spacewalk.dmg"
   name "Spacewalk"

@@ -14,6 +14,17 @@
           Each release appends a signed <item> below and keeps the five most recent.
         -->
         <item>
+            <title>0.1.2</title>
+            <pubDate>Mon, 12 Oct 2026 12:30:31 +0400</pubDate>
+            <link>https://github.com/InsaneArts/Spacewalk</link>
+            <sparkle:fullReleaseNotesLink>https://github.com/InsaneArts/Spacewalk/releases</sparkle:fullReleaseNotesLink>
+            <sparkle:version>19</sparkle:version>
+            <sparkle:shortVersionString>0.1.2</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>26.6</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <enclosure url="https://github.com/InsaneArts/Spacewalk/releases/download/v0.1.2/Spacewalk-v0.1.2.zip" length="3620251" type="application/octet-stream" sparkle:edSignature="JRGse6hmlHrKS1lYhQspT9LpmIuWk5EgRRsVAW3aqfV7xt4b8VfNbf6NCR4jNq8RbGDgzBaypf3rt5Jt26h+AA=="/>
+        </item>
+        <item>
             <title>0.1.1</title>
             <pubDate>Mon, 05 Oct 2026 19:04:02 +0400</pubDate>
             <link>https://github.com/InsaneArts/Spacewalk</link>
