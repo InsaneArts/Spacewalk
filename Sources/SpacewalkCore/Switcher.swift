@@ -130,7 +130,11 @@ public final class Switcher {
                 existing.pill.update(screen: screen)
                 existing.overview.update(screen: screen)
                 existing.bar.update(screen: screen)
-                if !existing.capture.isRunning { await existing.capture.start() }
+                if settings.usesLiveCapture {
+                    if !existing.capture.isRunning { await existing.capture.start() }
+                } else if existing.capture.isRunning {
+                    await existing.capture.stop()
+                }
             } else {
                 let display = Display(screen: screen, capture: DisplayCapture(screen: screen), overlay: OverlayWindow(screen: screen),
                                       pill: PillWindow(screen: screen), overview: OverviewWindow(screen: screen), bar: SpacesBarWindow(screen: screen))
@@ -139,15 +143,17 @@ public final class Switcher {
                 display.overview.onCancel = { [weak self] in self?.overviewScrub = nil }
                 display.bar.onSelect = { [weak self] index in self?.perform(.index(index + 1)) }
                 displays[screen.displayID] = display
-                await display.capture.start()
+                if settings.usesLiveCapture { await display.capture.start() }
             }
         }
+        guard settings.usesLiveCapture else { return }
         await refreshWallpapers()
         await refreshPictures(force: true)
     }
 
     /// Pictures of Spaces we have never left through Spacewalk, composed from their windows. Throttled.
     public func refreshPictures(force: Bool = false) async {
+        guard settings.usesLiveCapture else { return }
         let now = CACurrentMediaTime()
         guard force || now - lastPictureRefresh > 10 else { return }
         lastPictureRefresh = now
@@ -384,6 +390,7 @@ public final class Switcher {
 
     /// Captures every space's wallpaper on every display. `forcing` is refreshed even when fresh.
     public func refreshWallpapers(forcing: UInt64? = nil, maxAge: Double = 120) async {
+        guard settings.usesLiveCapture else { return }
         let snapshot = engine.snapshot()
         for display in displays.values {
             guard let uuid = SpaceEngine.uuid(for: display.screen.displayID), let spaces = snapshot.display(uuid: uuid) else { continue }
@@ -443,7 +450,7 @@ public final class Switcher {
     private func arrive(at index: Int, from displayID: CGDirectDisplayID) {
         guard let display = displays[displayID] else { return }
         let target: SpaceTarget = .index(index + 1)
-        guard !switching, settings.enabled, case .success(let plan) = engine.plan(target) else {
+        guard settings.usesLiveCapture, !switching, settings.enabled, case .success(let plan) = engine.plan(target) else {
             display.overview.hide()
             perform(target)
             return

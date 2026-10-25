@@ -146,6 +146,9 @@ public struct HotkeyBinding: Codable, Equatable, Hashable, Identifiable, Sendabl
 public struct SpacewalkSettings: Codable, Equatable, Sendable {
     public var enabled = true
     public var effect: Effect = .depth
+    /// Instant only asks the Dock to switch, so it must not keep a capture stream open.
+    /// Every other effect still needs the live picture.
+    public var usesLiveCapture: Bool { effect != .instant }
     /// Seconds. For springs this is the perceptual duration.
     public var duration: Double = 0.24
     public var easing: EasingPreset = .smooth

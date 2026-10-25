@@ -315,6 +315,7 @@ final class AppModel {
         }
         switcher.settings = settings
         switcher.slowMotion = settings.slowMotion
+        if old.effect != settings.effect { Task { await switcher.attachDisplays() } }
         if old.hotkeys != settings.hotkeys { registerHotkeys() }
         if old.launchAtLogin != settings.launchAtLogin { applyLaunchAtLogin() }
         if old.interceptTrackpadSwipes != settings.interceptTrackpadSwipes || old.interactiveSwipes != settings.interactiveSwipes || old.gestureOverview != settings.gestureOverview { applyInterceptor() }
