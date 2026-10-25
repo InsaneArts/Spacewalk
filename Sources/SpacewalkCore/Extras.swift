@@ -139,3 +139,144 @@ public final class PillWindow {
         CATransaction.commit()
     }
 }
+
+/// The Space number in a corner. It fades on its own and ignores clicks.
+@MainActor
+public final class NumberWindow {
+    private let panel: NSPanel
+    private let layer = CALayer()
+    private var hideWork: DispatchWorkItem?
+    private var showToken = 0
+    private var screen: NSScreen
+
+    public init(screen: NSScreen) {
+        self.screen = screen
+        panel = NSPanel(contentRect: .zero, styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
+        panel.level = .statusBar
+        panel.isOpaque = false
+        panel.backgroundColor = .clear
+        panel.hasShadow = false
+        panel.ignoresMouseEvents = true
+        panel.hidesOnDeactivate = false
+        panel.isReleasedWhenClosed = false
+        panel.animationBehavior = .none
+        panel.collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle, .fullScreenAuxiliary]
+        let view = NSView(frame: .zero)
+        view.wantsLayer = true
+        view.layer?.addSublayer(layer)
+        layer.opacity = 0
+        layer.contentsGravity = .resize
+        panel.contentView = view
+    }
+
+    public func update(screen: NSScreen) { self.screen = screen }
+
+    public func show(_ text: String, size: CGFloat, hex: String, outline: String, corner: ScreenCorner, nudgeX: Double, nudgeY: Double, duration: Double) {
+        hideWork?.cancel()
+        showToken += 1
+        let token = showToken
+        let scale = screen.backingScaleFactor
+        let drawn = Self.draw(text, size: size, hex: hex, outline: outline, scale: scale)
+        let pointSize = drawn.size
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        layer.contents = drawn.image
+        layer.contentsScale = scale
+        layer.frame = CGRect(origin: .zero, size: pointSize)
+        panel.setFrame(Self.frame(for: pointSize, corner: corner, nudgeX: nudgeX, nudgeY: nudgeY, on: screen), display: false)
+        (panel.contentView?.layer)?.frame = CGRect(origin: .zero, size: pointSize)
+        CATransaction.commit()
+        panel.orderFrontRegardless()
+        let total = max(0.2, duration)
+        let fadeIn = min(0.16, total * 0.18)
+        let fadeOut = min(max(0.22, total * 0.6), total - fadeIn)
+        let hold = max(0, total - fadeIn - fadeOut)
+        fade(to: 1, duration: fadeIn)
+        let work = DispatchWorkItem { [weak self] in
+            guard let self, self.showToken == token else { return }
+            self.fade(to: 0, duration: fadeOut)
+            DispatchQueue.main.asyncAfter(deadline: .now() + fadeOut + 0.05) { [weak self] in
+                guard let self, self.showToken == token else { return }
+                self.panel.orderOut(nil)
+            }
+        }
+        hideWork = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + fadeIn + hold, execute: work)
+    }
+
+    private func fade(to opacity: Float, duration: Double) {
+        let fade = CABasicAnimation(keyPath: "opacity")
+        fade.fromValue = layer.presentation()?.opacity ?? layer.opacity
+        fade.toValue = opacity
+        fade.duration = duration
+        fade.timingFunction = CAMediaTimingFunction(name: .easeOut)
+        CATransaction.begin()
+        CATransaction.setDisableActions(true)
+        layer.opacity = opacity
+        layer.add(fade, forKey: "opacity")
+        CATransaction.commit()
+    }
+
+    private static func frame(for size: NSSize, corner: ScreenCorner, nudgeX: Double, nudgeY: Double, on screen: NSScreen) -> NSRect {
+        let area = screen.visibleFrame
+        let side = CGFloat(nudgeX)
+        let edge = CGFloat(nudgeY)
+        let x: CGFloat
+        let y: CGFloat
+        switch corner {
+        case .topLeft:
+            x = area.minX + side
+            y = area.maxY - size.height - edge
+        case .topRight:
+            x = area.maxX - size.width - side
+            y = area.maxY - size.height - edge
+        case .bottomLeft:
+            x = area.minX + side
+            y = area.minY + edge
+        case .bottomRight:
+            x = area.maxX - size.width - side
+            y = area.minY + edge
+        }
+        return NSRect(x: x, y: y, width: size.width, height: size.height)
+    }
+
+    private static func draw(_ text: String, size: CGFloat, hex: String, outline: String, scale: CGFloat) -> (image: CGImage, size: NSSize) {
+        let font = NSFont.systemFont(ofSize: size, weight: .semibold)
+        let stroke = max(2, size * 0.045)
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.alignment = .center
+        func styled(_ color: NSColor) -> NSAttributedString {
+            NSAttributedString(string: text, attributes: [
+                .font: font,
+                .foregroundColor: color,
+                .paragraphStyle: paragraph
+            ])
+        }
+        let fill = styled(NSColor(hexRGB: hex))
+        let edge = styled(NSColor(hexRGB: outline))
+        let measured = fill.boundingRect(with: NSSize(width: 4000, height: 2000), options: [.usesLineFragmentOrigin])
+        let pad = stroke + 20
+        let canvas = NSSize(width: ceil(measured.width + pad * 2), height: ceil(measured.height + pad * 2))
+        let pixels = CGSize(width: canvas.width * scale, height: canvas.height * scale)
+        let context = CGContext(data: nil, width: Int(pixels.width), height: Int(pixels.height), bitsPerComponent: 8, bytesPerRow: 0, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+        context.scaleBy(x: scale, y: scale)
+        let box = NSRect(x: pad, y: pad, width: measured.width, height: measured.height)
+        NSGraphicsContext.saveGraphicsState()
+        NSGraphicsContext.current = NSGraphicsContext(cgContext: context, flipped: false)
+        for step in 0..<12 {
+            let angle = Double(step) / 12 * .pi * 2
+            edge.draw(in: box.offsetBy(dx: cos(angle) * stroke, dy: sin(angle) * stroke))
+        }
+        fill.draw(in: box)
+        NSGraphicsContext.restoreGraphicsState()
+        return (context.makeImage()!, canvas)
+    }
+}
+
+private extension NSColor {
+    convenience init(hexRGB: String) {
+        var value: UInt64 = 0
+        Scanner(string: hexRGB).scanHexInt64(&value)
+        self.init(srgbRed: CGFloat((value >> 16) & 0xFF) / 255, green: CGFloat((value >> 8) & 0xFF) / 255, blue: CGFloat(value & 0xFF) / 255, alpha: 1)
+    }
+}

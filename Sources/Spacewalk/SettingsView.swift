@@ -1,4 +1,82 @@
+import AppKit
 import SwiftUI
+
+/// Drag up or down to change. Double-click to type. The suffix stays put.
+private struct ScrubField: View {
+    var title: String
+    var suffix: String
+    @Binding var value: Double
+    var range: ClosedRange<Double>
+    var sensitivity: Double = 8
+    @State private var editing = false
+    @State private var draft = ""
+    @State private var dragOrigin: Double?
+    @FocusState private var focused: Bool
+
+    private var shown: String { "\(Int(value.rounded()))" }
+
+    var body: some View {
+        HStack(spacing: 4) {
+            Text(title)
+            Spacer(minLength: 8)
+            ZStack(alignment: .trailing) {
+                Text(editing ? draft : shown)
+                    .opacity(editing ? 0 : 1)
+                if editing {
+                    TextField("", text: $draft)
+                        .textFieldStyle(.plain)
+                        .multilineTextAlignment(.trailing)
+                        .focused($focused)
+                        .onSubmit { commit() }
+                        .onExitCommand { editing = false }
+                        .onChange(of: focused) { _, isFocused in if !isFocused { commit() } }
+                }
+            }
+            .font(.body.monospacedDigit())
+            .frame(width: 52, height: 18, alignment: .trailing)
+            .contentShape(Rectangle())
+            .gesture(DragGesture(minimumDistance: 1).onChanged { drag in
+                guard !editing else { return }
+                if dragOrigin == nil { dragOrigin = value }
+                let next = (dragOrigin ?? value) - drag.translation.height * sensitivity
+                value = min(range.upperBound, max(range.lowerBound, next.rounded()))
+            }.onEnded { _ in dragOrigin = nil })
+            .onTapGesture(count: 2) {
+                draft = shown
+                editing = true
+                DispatchQueue.main.async { focused = true }
+            }
+            Text(suffix)
+                .font(.body.monospacedDigit())
+                .frame(width: 28, alignment: .leading)
+        }
+        .help("Drag up or down. Double-click to type.")
+    }
+
+    private func commit() {
+        let digits = draft.filter(\.isNumber)
+        if let number = Double(digits) {
+            value = min(range.upperBound, max(range.lowerBound, number))
+        }
+        editing = false
+    }
+}
+
+private extension Color {
+    init(hexRGB: String) {
+        var value: UInt64 = 0
+        Scanner(string: hexRGB).scanHexInt64(&value)
+        self.init(red: Double((value >> 16) & 0xFF) / 255, green: Double((value >> 8) & 0xFF) / 255, blue: Double(value & 0xFF) / 255)
+    }
+
+    var hexRGB: String {
+        let converted = NSColor(self).usingColorSpace(.sRGB) ?? NSColor(self)
+        let red = Int((converted.redComponent * 255).rounded())
+        let green = Int((converted.greenComponent * 255).rounded())
+        let blue = Int((converted.blueComponent * 255).rounded())
+        return String(format: "%02X%02X%02X", red, green, blue)
+    }
+}
 import SpacewalkCore
 
 /// Four toolbar tabs, the way Finder and Safari lay out their settings: General, Transition,
@@ -123,6 +201,7 @@ struct GeneralTab: View {
             } footer: {
                 Text("Names appear in the menu bar, the Overview and the Spaces bar.")
             }
+            SpaceNumberSection(model: model)
             Section("Startup") {
                 Toggle("Open Spacewalk at login", isOn: $model.settings.launchAtLogin)
                 if let error = model.launchAtLoginError { Text(error).foregroundStyle(.orange) }
@@ -144,6 +223,70 @@ struct GeneralTab: View {
                      ?? "Updates come from GitHub and are verified with an EdDSA signature before they install.")
             }
         }
+    }
+}
+
+struct SpaceNumberSection: View {
+    @Bindable var model: AppModel
+
+    private var numberColor: Binding<Color> {
+        Binding(get: { Color(hexRGB: model.settings.spaceNumberColor) }, set: { model.settings.spaceNumberColor = $0.hexRGB })
+    }
+
+    private var outlineColor: Binding<Color> {
+        Binding(get: { Color(hexRGB: model.settings.spaceNumberOutline) }, set: { model.settings.spaceNumberOutline = $0.hexRGB })
+    }
+
+    /// Always the room a size-200 number needs, so smaller sizes do not resize the box.
+    private var numberSample: some View {
+        let size = model.settings.spaceNumberSize
+        let trim = max(1.5, size * 0.035)
+        return ZStack {
+            ForEach(0..<8, id: \.self) { step in
+                Text("1")
+                    .offset(x: cos(Double(step) / 8 * .pi * 2) * trim, y: sin(Double(step) / 8 * .pi * 2) * trim)
+            }
+            .foregroundStyle(outlineColor.wrappedValue)
+            Text("1").foregroundStyle(numberColor.wrappedValue)
+        }
+        .font(.system(size: size, weight: .semibold))
+        .frame(width: 248, height: 248)
+    }
+
+    var body: some View {
+        Section("Space number") {
+            Toggle("Show the number", isOn: $model.settings.showSpaceNumber)
+            if model.settings.showSpaceNumber {
+                HStack(alignment: .top, spacing: 24) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Picker("Corner", selection: $model.settings.spaceNumberCorner) {
+                            ForEach(ScreenCorner.allCases, id: \.self) { Text($0.title).tag($0) }
+                        }
+                        LabeledSlider("Size", value: $model.settings.spaceNumberSize, range: 24...200) { "\(Int($0.rounded()))" }
+                        ScrubField(title: "Side", suffix: "pt", value: $model.settings.spaceNumberNudgeX, range: -200...400, sensitivity: 2)
+                        ScrubField(title: "Edge", suffix: "pt", value: $model.settings.spaceNumberNudgeY, range: -200...400, sensitivity: 2)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    VStack(alignment: .leading, spacing: 8) {
+                        ScrubField(title: "Duration", suffix: "ms", value: $model.settings.spaceNumberDuration, range: 200...5000)
+                        ColorPicker("Color", selection: numberColor, supportsOpacity: false)
+                        ColorPicker("Outline", selection: outlineColor, supportsOpacity: false)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                HStack {
+                    Spacer()
+                    numberSample
+                    Spacer()
+                }
+            }
+        }
+        .onChange(of: model.settings.spaceNumberSize) { _, _ in model.flashSpaceNumber() }
+        .onChange(of: model.settings.spaceNumberNudgeX) { _, _ in model.flashSpaceNumber() }
+        .onChange(of: model.settings.spaceNumberNudgeY) { _, _ in model.flashSpaceNumber() }
+        .onChange(of: model.settings.spaceNumberCorner) { _, _ in model.flashSpaceNumber() }
+        .onChange(of: model.settings.spaceNumberColor) { _, _ in model.flashSpaceNumber() }
+        .onChange(of: model.settings.spaceNumberOutline) { _, _ in model.flashSpaceNumber() }
     }
 }
 

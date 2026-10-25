@@ -62,7 +62,10 @@ final class AppModel {
         applyInterceptor()
         applyMouse()
         NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.activeSpaceDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
-            Task { @MainActor in self?.refreshSpaces() }
+            Task { @MainActor in
+                self?.refreshSpaces()
+                self?.flashSpaceNumber()
+            }
         }
         refreshSpaces()
         NotificationCenter.default.addObserver(forName: NSApplication.didChangeScreenParametersNotification, object: nil, queue: .main) { [weak self] _ in
@@ -84,11 +87,13 @@ final class AppModel {
     func refreshDisplays() async {
         captureAccess = CaptureAccess.granted
         accessibilityAccess = SpaceEngine.accessibilityGranted
-        if captureAccess { await switcher.attachDisplays() }
+        await switcher.attachDisplays()
         displayStatus = switcher.displayStatus
         applyInterceptor()
         refreshSpaces()
     }
+
+    func flashSpaceNumber() { switcher.flashNumber() }
 
     func refreshSpaces() {
         spaces = switcher.engine.snapshot().displays

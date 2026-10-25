@@ -46,8 +46,15 @@ public struct SpaceSnapshot: Sendable {
                 guard let id = (entry["id64"] as? NSNumber)?.uint64Value else { return nil }
                 return Space(id: id, type: (entry["type"] as? NSNumber)?.intValue ?? 0, uuid: entry["uuid"] as? String ?? "")
             }
-            let current = ((dict["Current Space"] as? [String: Any])?["id64"] as? NSNumber)?.uint64Value
-            let currentID = current ?? (spaces.contains { $0.id == activeSpace } ? activeSpace : spaces.first?.id ?? 0)
+            let listed = ((dict["Current Space"] as? [String: Any])?["id64"] as? NSNumber)?.uint64Value
+            let currentID: UInt64
+            if spaces.contains(where: { $0.id == activeSpace }) {
+                currentID = activeSpace
+            } else if let listed, spaces.contains(where: { $0.id == listed }) {
+                currentID = listed
+            } else {
+                currentID = spaces.first?.id ?? 0
+            }
             return DisplaySpaces(displayUUID: uuid, spaces: spaces, currentID: currentID)
         }
         return SpaceSnapshot(displays: displays)

@@ -58,6 +58,7 @@ public final class Switcher {
         let capture: DisplayCapture
         let overlay: OverlayWindow
         let pill: PillWindow
+        let number: NumberWindow
         let overview: OverviewWindow
         let bar: SpacesBarWindow
     }
@@ -130,10 +131,11 @@ public final class Switcher {
                 existing.pill.update(screen: screen)
                 existing.overview.update(screen: screen)
                 existing.bar.update(screen: screen)
+                existing.number.update(screen: screen)
                 if !existing.capture.isRunning { await existing.capture.start() }
             } else {
                 let display = Display(screen: screen, capture: DisplayCapture(screen: screen), overlay: OverlayWindow(screen: screen),
-                                      pill: PillWindow(screen: screen), overview: OverviewWindow(screen: screen), bar: SpacesBarWindow(screen: screen))
+                                      pill: PillWindow(screen: screen), number: NumberWindow(screen: screen), overview: OverviewWindow(screen: screen), bar: SpacesBarWindow(screen: screen))
                 let displayID = screen.displayID
                 display.overview.onSelect = { [weak self] index in self?.arrive(at: index, from: displayID) }
                 display.overview.onCancel = { [weak self] in self?.overviewScrub = nil }
@@ -167,7 +169,23 @@ public final class Switcher {
 
     private func announce(_ plan: SpaceEngine.Plan, on display: Display, for seconds: Double) {
         if settings.showWorkspacePill { display.pill.show(plan.display.label(at: plan.toIndex, names: settings.spaceNames), for: seconds + 0.35) }
+        showNumber(plan.toIndex, on: display)
         if settings.playSound { whoosh?.play() }
+    }
+
+    private func showNumber(_ index: Int, on display: Display) {
+        guard settings.showSpaceNumber else { return }
+        display.number.show("\(index + 1)", size: settings.spaceNumberSize, hex: settings.spaceNumberColor, outline: settings.spaceNumberOutline, corner: settings.spaceNumberCorner, nudgeX: settings.spaceNumberNudgeX, nudgeY: settings.spaceNumberNudgeY, duration: settings.spaceNumberDuration / 1000)
+    }
+
+    /// Shows the current Space number with the settings as they are now.
+    public func flashNumber() {
+        guard settings.showSpaceNumber else { return }
+        let snapshot = engine.snapshot()
+        for display in displays.values {
+            let index = SpaceEngine.uuid(for: display.screen.displayID).flatMap { snapshot.display(uuid: $0)?.currentIndex } ?? 0
+            display.number.show("\(index + 1)", size: settings.spaceNumberSize, hex: settings.spaceNumberColor, outline: settings.spaceNumberOutline, corner: settings.spaceNumberCorner, nudgeX: settings.spaceNumberNudgeX, nudgeY: settings.spaceNumberNudgeY, duration: settings.spaceNumberDuration / 1000)
+        }
     }
 
     public func detachAll() async {
@@ -217,6 +235,9 @@ public final class Switcher {
 
         func plain(_ note: String) async {
             hideAll()
+            if let displayID = plan.displayID, let display = displays[displayID] {
+                showNumber(plan.toIndex, on: display)
+            }
             let switched = await engine.execute(plan)
             report.note = switched ? note : "\(note); the Dock did not switch"
             finish(report)

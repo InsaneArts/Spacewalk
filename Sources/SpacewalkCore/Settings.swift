@@ -143,6 +143,18 @@ public struct HotkeyBinding: Codable, Equatable, Hashable, Identifiable, Sendabl
     }
 }
 
+public enum ScreenCorner: String, Codable, CaseIterable, Sendable {
+    case topLeft, topRight, bottomLeft, bottomRight
+    public var title: String {
+        switch self {
+        case .topLeft: return "Top left"
+        case .topRight: return "Top right"
+        case .bottomLeft: return "Bottom left"
+        case .bottomRight: return "Bottom right"
+        }
+    }
+}
+
 public struct SpacewalkSettings: Codable, Equatable, Sendable {
     public var enabled = true
     public var effect: Effect = .depth
@@ -185,6 +197,18 @@ public struct SpacewalkSettings: Codable, Equatable, Sendable {
     public var hapticStrength: HapticStrength = .strong
     /// A small capsule naming the destination while switching.
     public var showWorkspacePill = false
+    /// The Space you landed on, drawn in a corner and then faded.
+    public var showSpaceNumber = true
+    public var spaceNumberSize: Double = 72
+    public var spaceNumberCorner: ScreenCorner = .topRight
+    /// Extra points in from the side, and in from the top or bottom. Negative moves toward the screen edge.
+    public var spaceNumberNudgeX: Double = 0
+    public var spaceNumberNudgeY: Double = 0
+    /// Finder-folder blue, without a leading #.
+    public var spaceNumberColor = "6EC4F5"
+    public var spaceNumberOutline = "FFFFFF"
+    /// How long the number stays, in milliseconds, including its fade.
+    public var spaceNumberDuration = 1000.0
     /// A short synthesized whoosh on every switch.
     public var playSound = false
     /// Names per Space UUID, shown in the pill, the overview and the menu bar.
@@ -217,6 +241,8 @@ public struct SpacewalkSettings: Codable, Equatable, Sendable {
         case enabled, effect, duration, easing, bounce, orientation, directionMode, invertDirection, wallpaperMode
         case parallax, depthScale, dimAmount, cornerRadius, hotkeys, settleFrames, eagerStart, predictiveStart, interceptTrackpadSwipes
         case interactiveSwipes, hapticFeedback, hapticStrength, showWorkspacePill, playSound, launchAtLogin
+        case showSpaceNumber, spaceNumberSize, spaceNumberCorner, spaceNumberNudgeX, spaceNumberNudgeY
+        case spaceNumberColor, spaceNumberOutline, spaceNumberDuration
         case spaceNames, overviewColumns, menuBarIndicator, mouseButtonsSwitch, menuBarScrollSwitch, wrapAround, switchAllDisplays
         case gestureOverview, spacesBar, spacesBarAtTop, slowMotion
     }
@@ -259,6 +285,14 @@ public struct SpacewalkSettings: Codable, Equatable, Sendable {
         hapticFeedback = try c.decodeIfPresent(Bool.self, forKey: .hapticFeedback) ?? base.hapticFeedback
         hapticStrength = (try? c.decodeIfPresent(HapticStrength.self, forKey: .hapticStrength)) ?? base.hapticStrength
         showWorkspacePill = try c.decodeIfPresent(Bool.self, forKey: .showWorkspacePill) ?? base.showWorkspacePill
+        showSpaceNumber = try c.decodeIfPresent(Bool.self, forKey: .showSpaceNumber) ?? base.showSpaceNumber
+        spaceNumberSize = try c.decodeIfPresent(Double.self, forKey: .spaceNumberSize) ?? base.spaceNumberSize
+        spaceNumberCorner = try c.decodeIfPresent(ScreenCorner.self, forKey: .spaceNumberCorner) ?? base.spaceNumberCorner
+        spaceNumberNudgeX = try c.decodeIfPresent(Double.self, forKey: .spaceNumberNudgeX) ?? base.spaceNumberNudgeX
+        spaceNumberNudgeY = try c.decodeIfPresent(Double.self, forKey: .spaceNumberNudgeY) ?? base.spaceNumberNudgeY
+        spaceNumberColor = try c.decodeIfPresent(String.self, forKey: .spaceNumberColor) ?? base.spaceNumberColor
+        spaceNumberOutline = try c.decodeIfPresent(String.self, forKey: .spaceNumberOutline) ?? base.spaceNumberOutline
+        spaceNumberDuration = try c.decodeIfPresent(Double.self, forKey: .spaceNumberDuration) ?? base.spaceNumberDuration
         playSound = try c.decodeIfPresent(Bool.self, forKey: .playSound) ?? base.playSound
         spaceNames = try c.decodeIfPresent([String: String].self, forKey: .spaceNames) ?? base.spaceNames
         overviewColumns = try c.decodeIfPresent(Int.self, forKey: .overviewColumns) ?? base.overviewColumns

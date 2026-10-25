@@ -60,6 +60,14 @@ public enum ConfigFile {
         if let v = double("transition", "dim") { settings.dimAmount = max(0, min(1, v)) }
         if let v = double("transition", "corner-radius") { settings.cornerRadius = max(0, min(80, v)) }
         if let v = bool("transition", "pill") { settings.showWorkspacePill = v }
+        if let v = bool("transition", "number") { settings.showSpaceNumber = v }
+        if let v = double("transition", "number-size") { settings.spaceNumberSize = max(24, min(200, v)) }
+        if let v = choice(string("transition", "number-corner"), ScreenCorner.self, key: "transition.number-corner") { settings.spaceNumberCorner = v }
+        if let v = double("transition", "number-x") { settings.spaceNumberNudgeX = max(-200, min(400, v)) }
+        if let v = double("transition", "number-y") { settings.spaceNumberNudgeY = max(-200, min(400, v)) }
+        if let v = string("transition", "number-color") { settings.spaceNumberColor = v.trimmingCharacters(in: CharacterSet(charactersIn: "#")) }
+        if let v = string("transition", "number-outline") { settings.spaceNumberOutline = v.trimmingCharacters(in: CharacterSet(charactersIn: "#")) }
+        if let v = double("transition", "number-ms") { settings.spaceNumberDuration = max(200, min(5000, v)) }
         if let v = bool("transition", "sound") { settings.playSound = v }
 
         if let shortcuts = TOML.lookup(table, path: ["shortcuts"])?.table {
@@ -160,6 +168,14 @@ public enum ConfigFile {
         dim = \(num(s.dimAmount))
         corner-radius = \(num(s.cornerRadius))
         pill = \(s.showWorkspacePill)
+        number = \(s.showSpaceNumber)
+        number-size = \(Int(s.spaceNumberSize.rounded()))
+        number-corner = \(q(s.spaceNumberCorner.rawValue))  # topLeft, topRight, bottomLeft, bottomRight
+        number-x = \(Int(s.spaceNumberNudgeX.rounded()))
+        number-y = \(Int(s.spaceNumberNudgeY.rounded()))
+        number-color = \(q(s.spaceNumberColor))
+        number-outline = \(q(s.spaceNumberOutline))
+        number-ms = \(Int(s.spaceNumberDuration.rounded()))
         sound = \(s.playSound)
 
         [shortcuts]
