@@ -54,7 +54,8 @@ struct ToolbarTabs: View {
                         Image(systemName: tab.symbol).font(.system(size: 20, weight: .regular)).frame(height: 24)
                         Text(tab.title).font(.caption)
                     }
-                    .frame(width: 76, height: 50)
+                    .frame(width: 92, height: 58)
+                    .contentShape(RoundedRectangle(cornerRadius: 7))
                     .background(selection == tab ? Color.primary.opacity(0.09) : .clear, in: RoundedRectangle(cornerRadius: 7))
                     .foregroundStyle(selection == tab ? Color.accentColor : .secondary)
                 }
