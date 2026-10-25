@@ -57,6 +57,7 @@ final class AppModel {
         registerHotkeys()
         listenForCommands()
         interceptor.onSwipe = { [weak self] direction in self?.perform(direction == .right ? .next : .previous) }
+        interceptor.onDirect = { [weak self] space in self?.perform(.index(space)) }
         interceptor.onGesture = { [weak self] event in self?.switcher.gesture(event) }
         mouse.onSwitch = { [weak self] direction in self?.perform(direction == .right ? .next : .previous) }
         applyInterceptor()
@@ -317,7 +318,9 @@ final class AppModel {
         switcher.slowMotion = settings.slowMotion
         if old.hotkeys != settings.hotkeys { registerHotkeys() }
         if old.launchAtLogin != settings.launchAtLogin { applyLaunchAtLogin() }
-        if old.interceptTrackpadSwipes != settings.interceptTrackpadSwipes || old.interactiveSwipes != settings.interactiveSwipes || old.gestureOverview != settings.gestureOverview { applyInterceptor() }
+        if old.interceptTrackpadSwipes != settings.interceptTrackpadSwipes || old.interactiveSwipes != settings.interactiveSwipes || old.gestureOverview != settings.gestureOverview
+            || old.swipeLeftSpace != settings.swipeLeftSpace || old.swipeRightSpace != settings.swipeRightSpace
+            || old.swipeUpSpace != settings.swipeUpSpace || old.swipeDownSpace != settings.swipeDownSpace { applyInterceptor() }
         if old.spacesBar != settings.spacesBar || old.spacesBarAtTop != settings.spacesBarAtTop || old.spaceNames != settings.spaceNames { switcher.refreshBars() }
         if old.mouseButtonsSwitch != settings.mouseButtonsSwitch || old.menuBarScrollSwitch != settings.menuBarScrollSwitch { applyMouse() }
         writeStatus()
@@ -334,9 +337,16 @@ final class AppModel {
     }
 
     private func applyInterceptor() {
-        interceptor.interactive = settings.interactiveSwipes
-        interceptor.overviewGestures = settings.gestureOverview
-        if settings.interceptTrackpadSwipes, accessibilityAccess {
+        let directHorizontal = settings.swipeLeftSpace > 0 || settings.swipeRightSpace > 0
+        interceptor.interactive = settings.interactiveSwipes && !directHorizontal
+        interceptor.overviewGestures = settings.gestureOverview && settings.swipeUpSpace == 0 && settings.swipeDownSpace == 0
+        interceptor.takeHorizontal = settings.interceptTrackpadSwipes || directHorizontal
+        interceptor.leftSpace = settings.swipeLeftSpace
+        interceptor.rightSpace = settings.swipeRightSpace
+        interceptor.upSpace = settings.swipeUpSpace
+        interceptor.downSpace = settings.swipeDownSpace
+        let wantsSwipes = settings.interceptTrackpadSwipes || directHorizontal || settings.swipeUpSpace > 0 || settings.swipeDownSpace > 0
+        if wantsSwipes, accessibilityAccess {
             interceptor.start()
         } else {
             interceptor.stop()

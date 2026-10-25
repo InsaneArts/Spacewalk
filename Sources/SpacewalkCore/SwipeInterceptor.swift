@@ -18,6 +18,15 @@ public enum GestureEvent: Sendable {
 public final class SwipeInterceptor {
     /// Fired once per swipe when `interactive` is off.
     public var onSwipe: ((SwipeDirection) -> Void)?
+    /// Fired when a swipe direction is assigned to a Space number.
+    public var onDirect: ((Int) -> Void)?
+    /// 0 means that direction is not assigned.
+    public var leftSpace = 0
+    public var rightSpace = 0
+    public var upSpace = 0
+    public var downSpace = 0
+    /// When off, horizontal swipes stay with macOS. Vertical assignments do not take them.
+    public var takeHorizontal = false
     /// Streams the whole gesture when `interactive` is on, so the transition can follow the fingers.
     public var onGesture: ((GestureEvent) -> Void)?
     public var interactive = false
@@ -76,6 +85,8 @@ public final class SwipeInterceptor {
             let motion = event.getIntegerValueField(DockSwipe.field(123))
             let phase = event.getIntegerValueField(DockSwipe.field(132))
             if motion == DockSwipe.horizontalMotion {
+                let taken = MainActor.assumeIsolated { self.takeHorizontal }
+                guard taken else { return Unmanaged.passUnretained(event) }
                 return MainActor.assumeIsolated { self.handleDockSwipe(phase: phase, event: event) }
             }
             return MainActor.assumeIsolated { self.handleVerticalSwipe(phase: phase, event: event) }
@@ -87,7 +98,13 @@ public final class SwipeInterceptor {
         return Unmanaged.passUnretained(event)
     }
 
+    private func jumpHorizontal(rightward: Bool) {
+        let space = rightward ? rightSpace : leftSpace
+        if space > 0 { onDirect?(space) } else { onSwipe?(rightward ? .right : .left) }
+    }
+
     private func handleVerticalSwipe(phase: Int64, event: CGEvent) -> Unmanaged<CGEvent>? {
+        if upSpace > 0 || downSpace > 0 { return handleDirectVertical(phase: phase, event: event) }
         guard overviewGestures else { return Unmanaged.passUnretained(event) }
         let progress = event.getDoubleValueField(DockSwipe.field(124))
         let velocity = event.getDoubleValueField(DockSwipe.field(130))
@@ -106,6 +123,48 @@ public final class SwipeInterceptor {
             return verticalTracking ? nil : Unmanaged.passUnretained(event)
         }
         return nil
+    }
+
+    /// Positive progress is up, the same sign the Dock uses for a rightward swipe.
+    private func handleDirectVertical(phase: Int64, event: CGEvent) -> Unmanaged<CGEvent>? {
+        switch phase {
+        case DockSwipe.Phase.began.rawValue:
+            verticalTracking = true
+            fired = false
+            return nil
+        case DockSwipe.Phase.changed.rawValue:
+            guard verticalTracking else { return Unmanaged.passUnretained(event) }
+            if !fired {
+                let progress = event.getDoubleValueField(DockSwipe.field(124))
+                if progress != 0 {
+                    fired = true
+                    jumpVertical(up: progress > 0)
+                }
+            }
+            return nil
+        case DockSwipe.Phase.ended.rawValue:
+            guard verticalTracking else { return Unmanaged.passUnretained(event) }
+            if !fired {
+                let velocity = event.getDoubleValueField(DockSwipe.field(130))
+                let progress = event.getDoubleValueField(DockSwipe.field(124))
+                let value = velocity != 0 ? velocity : progress
+                if value != 0 { jumpVertical(up: value > 0) }
+            }
+            verticalTracking = false
+            fired = false
+            return nil
+        case DockSwipe.Phase.cancelled.rawValue:
+            verticalTracking = false
+            fired = false
+            return nil
+        default:
+            return verticalTracking ? nil : Unmanaged.passUnretained(event)
+        }
+    }
+
+    private func jumpVertical(up: Bool) {
+        let space = up ? upSpace : downSpace
+        if space > 0 { onDirect?(space) }
     }
 
     private func handleDockSwipe(phase: Int64, event: CGEvent) -> Unmanaged<CGEvent>? {
@@ -142,7 +201,7 @@ public final class SwipeInterceptor {
                 let progress = event.getDoubleValueField(DockSwipe.field(124))
                 if progress != 0 {
                     fired = true
-                    onSwipe?(DockSwipe.isRightward(progress) ? .right : .left)
+                    jumpHorizontal(rightward: DockSwipe.isRightward(progress))
                 }
             }
             return nil
@@ -150,7 +209,7 @@ public final class SwipeInterceptor {
             guard tracking else { return Unmanaged.passUnretained(event) }
             if !fired {
                 let velocity = event.getDoubleValueField(DockSwipe.field(129))
-                if velocity != 0 { onSwipe?(DockSwipe.isRightward(velocity) ? .right : .left) }
+                if velocity != 0 { jumpHorizontal(rightward: DockSwipe.isRightward(velocity)) }
             }
             tracking = false
             fired = false

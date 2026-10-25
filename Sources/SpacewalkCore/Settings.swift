@@ -203,6 +203,11 @@ public struct SpacewalkSettings: Codable, Equatable, Sendable {
     public var switchAllDisplays = false
     /// Replace the Mission Control swipe with Spacewalk's overview, zooming with the fingers.
     public var gestureOverview = false
+    /// Space number a swipe jumps to. 0 leaves that direction as next, previous, or macOS.
+    public var swipeLeftSpace = 0
+    public var swipeRightSpace = 0
+    public var swipeUpSpace = 0
+    public var swipeDownSpace = 0
     /// A thin bar listing Spaces with their app icons; click to switch.
     public var spacesBar = false
     public var spacesBarAtTop = false
@@ -219,6 +224,7 @@ public struct SpacewalkSettings: Codable, Equatable, Sendable {
         case interactiveSwipes, hapticFeedback, hapticStrength, showWorkspacePill, playSound, launchAtLogin
         case spaceNames, overviewColumns, menuBarIndicator, mouseButtonsSwitch, menuBarScrollSwitch, wrapAround, switchAllDisplays
         case gestureOverview, spacesBar, spacesBarAtTop, slowMotion
+        case swipeLeftSpace, swipeRightSpace, swipeUpSpace, swipeDownSpace
     }
 
     private enum LegacyKeys: String, CodingKey { case wallpaperMoves }
@@ -268,6 +274,10 @@ public struct SpacewalkSettings: Codable, Equatable, Sendable {
         wrapAround = try c.decodeIfPresent(Bool.self, forKey: .wrapAround) ?? base.wrapAround
         switchAllDisplays = try c.decodeIfPresent(Bool.self, forKey: .switchAllDisplays) ?? base.switchAllDisplays
         gestureOverview = try c.decodeIfPresent(Bool.self, forKey: .gestureOverview) ?? base.gestureOverview
+        swipeLeftSpace = try c.decodeIfPresent(Int.self, forKey: .swipeLeftSpace) ?? base.swipeLeftSpace
+        swipeRightSpace = try c.decodeIfPresent(Int.self, forKey: .swipeRightSpace) ?? base.swipeRightSpace
+        swipeUpSpace = try c.decodeIfPresent(Int.self, forKey: .swipeUpSpace) ?? base.swipeUpSpace
+        swipeDownSpace = try c.decodeIfPresent(Int.self, forKey: .swipeDownSpace) ?? base.swipeDownSpace
         spacesBar = try c.decodeIfPresent(Bool.self, forKey: .spacesBar) ?? base.spacesBar
         spacesBarAtTop = try c.decodeIfPresent(Bool.self, forKey: .spacesBarAtTop) ?? base.spacesBarAtTop
         slowMotion = try c.decodeIfPresent(Double.self, forKey: .slowMotion) ?? base.slowMotion

@@ -92,6 +92,10 @@ public enum ConfigFile {
             if v == "off" { settings.hapticFeedback = false } else if let strength = HapticStrength(rawValue: v) { settings.hapticFeedback = true; settings.hapticStrength = strength } else { warnings.append("trackpad.haptic: unknown value \(TOML.quote(v))") }
         }
         if let v = bool("trackpad", "mission-control-swipe-opens-overview") { settings.gestureOverview = v }
+        if let v = int("trackpad", "swipe-left") { settings.swipeLeftSpace = max(0, min(16, v)) }
+        if let v = int("trackpad", "swipe-right") { settings.swipeRightSpace = max(0, min(16, v)) }
+        if let v = int("trackpad", "swipe-up") { settings.swipeUpSpace = max(0, min(16, v)) }
+        if let v = int("trackpad", "swipe-down") { settings.swipeDownSpace = max(0, min(16, v)) }
         if let v = bool("mouse", "side-buttons") { settings.mouseButtonsSwitch = v }
         if let v = bool("mouse", "top-edge-scroll") { settings.menuBarScrollSwitch = v }
 
@@ -185,6 +189,10 @@ public enum ConfigFile {
         swipe = \(q(swipe))                   # off, instant, follow
         haptic = \(q(s.hapticFeedback ? s.hapticStrength.rawValue : "off"))     # off, light, medium, strong, double
         mission-control-swipe-opens-overview = \(s.gestureOverview)
+        swipe-left = \(s.swipeLeftSpace)       # 0 = next or previous, 1-16 = that Space
+        swipe-right = \(s.swipeRightSpace)
+        swipe-up = \(s.swipeUpSpace)         # 0 = leave to macOS
+        swipe-down = \(s.swipeDownSpace)
 
         [mouse]
         side-buttons = \(s.mouseButtonsSwitch)

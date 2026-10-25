@@ -434,6 +434,13 @@ struct ShortcutsTab: View {
             } footer: {
                 Text("Switches to the Space where that app's window is.")
             }
+            Section {
+                swipeCompass
+            } header: {
+                Text("Swipe to a Space")
+            } footer: {
+                Text("In System Settings → Trackpad, set Swipe between full-screen apps to four fingers. A swipe to the Space you are already on does nothing. Swipe up or down takes over that macOS gesture.")
+            }
             Section("Trackpad") {
                 Picker("Three-finger swipe", selection: swipeMode) {
                     Text("Leave to macOS").tag(SwipeMode.off)
@@ -462,6 +469,52 @@ struct ShortcutsTab: View {
                 Toggle("Scrolling at the top edge switches Spaces", isOn: $model.settings.menuBarScrollSwitch).disabled(!model.accessibilityAccess)
             }
         }
+    }
+
+    /// Every Space on the Mac, at least the 16 macOS allows.
+    private var spaceChoices: Int {
+        max(16, model.spaces.map(\.spaces.count).max() ?? 0)
+    }
+
+    /// Arrows point away from the middle. Each menu is centered on its arrow.
+    private var swipeCompass: some View {
+        VStack(spacing: 2) {
+            swipeMenu("Swipe up", value: $model.settings.swipeUpSpace, empty: "Leave to macOS")
+            Image(systemName: "arrow.up").frame(height: 16)
+            HStack(spacing: 10) {
+                swipeMenu("Swipe left", value: $model.settings.swipeLeftSpace, empty: "Next or previous")
+                Image(systemName: "arrow.left").frame(width: 16)
+                Circle().frame(width: 7, height: 7)
+                Image(systemName: "arrow.right").frame(width: 16)
+                swipeMenu("Swipe right", value: $model.settings.swipeRightSpace, empty: "Next or previous")
+            }
+            Image(systemName: "arrow.down").frame(height: 16)
+            swipeMenu("Swipe down", value: $model.settings.swipeDownSpace, empty: "Leave to macOS")
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 8)
+    }
+
+    private func swipeMenu(_ title: String, value: Binding<Int>, empty: String) -> some View {
+        let chosen = value.wrappedValue == 0 ? empty : "Space \(value.wrappedValue)"
+        return Menu {
+            Button(empty) { value.wrappedValue = 0 }
+            ForEach(1...spaceChoices, id: \.self) { number in
+                Button("Space \(number)") { value.wrappedValue = number }
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Text(chosen)
+                Image(systemName: "chevron.up.chevron.down").font(.system(size: 9, weight: .semibold))
+            }
+            .frame(width: 128)
+            .contentShape(Rectangle())
+        }
+        .menuStyle(.borderlessButton)
+        .menuIndicator(.hidden)
+        .fixedSize()
+        .disabled(!model.accessibilityAccess)
+        .accessibilityLabel(title)
     }
 
     private func shows(_ target: SpaceTarget) -> Bool {
